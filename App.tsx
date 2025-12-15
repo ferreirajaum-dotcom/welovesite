@@ -13,15 +13,13 @@ import CustomCursor from './components/CustomCursor';
 import { Artist } from './types';
 
 // --- Animation Constants & Variants (Optimized for 60FPS Fluidity) ---
-// Using a "Quintic Out" curve: starts quickly, decelerates very smoothly.
 const TRANSITION_EASE: [number, number, number, number] = [0.23, 1, 0.32, 1]; 
-const ANIMATION_DURATION = 1.0; // Balanced duration: not too slow, not too fast.
+const ANIMATION_DURATION = 0.8; // Slightly faster for snappier feel
 
 const fadeInUp: Variants = {
   hidden: { 
     opacity: 0, 
-    y: 40, // Reduced distance for less pixel travel (smoother)
-    // Removed 'filter: blur' as it causes significant scroll lag (jank) on many devices
+    y: 30, // Reduced further for smoother mobile performance
   },
   visible: { 
     opacity: 1, 
@@ -38,20 +36,20 @@ const staggerContainer: Variants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.15, // Slightly faster stagger for snappier feel
-      delayChildren: 0.1
+      staggerChildren: 0.1, 
+      delayChildren: 0.05
     }
   }
 };
 
 const serviceEntranceVariants: Variants = {
-  hidden: { opacity: 0, y: 50 },
+  hidden: { opacity: 0, y: 30 },
   visible: (i: number) => ({
     opacity: 1,
     y: 0,
     transition: {
-      delay: i * 0.15, // Stagger effect: cards appear one by one
-      duration: 1.0,
+      delay: i * 0.1, 
+      duration: 0.8,
       ease: TRANSITION_EASE
     }
   })
@@ -60,20 +58,10 @@ const serviceEntranceVariants: Variants = {
 const serviceHoverVariants: Variants = {
   rest: { y: 0, scale: 1, boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)" },
   hover: { 
-    y: -10, 
-    scale: 1.02, 
-    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.3)",
-    transition: { duration: 0.4, ease: "easeOut" }
-  }
-};
-
-const cardHover: Variants = {
-  rest: { y: 0, scale: 1, boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)" },
-  hover: { 
-    y: -8, 
-    scale: 1.01, // Subtle scale
-    boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
-    transition: { duration: 0.4, ease: "easeOut" }
+    y: -5, // Reduced movement
+    scale: 1.01, 
+    boxShadow: "0 20px 25px -12px rgba(0, 0, 0, 0.2)",
+    transition: { duration: 0.3, ease: "easeOut" }
   }
 };
 
@@ -169,13 +157,29 @@ const App: React.FC = () => {
   const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<typeof SERVICES[0] | null>(null);
-  
-  // Accordion State
   const [activeAccordion, setActiveAccordion] = useState<number | null>(null);
   
-  // Clients Pagination Logic
+  // Clients Pagination Logic with Responsive detection
   const [clientPage, setClientPage] = useState(0);
-  const clientsPerPage = 15;
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect Mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile(); // Check on mount
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Reset page when switching modes to avoid index issues
+  useEffect(() => {
+    setClientPage(0);
+  }, [isMobile]);
+
+  // Dynamic items per page: 6 for mobile (2cols * 3rows), 15 for desktop (5cols * 3rows)
+  const clientsPerPage = isMobile ? 6 : 15;
   const totalClientPages = Math.ceil(CLIENTS.length / clientsPerPage);
 
   const handlePrevClient = () => {
@@ -206,7 +210,6 @@ const App: React.FC = () => {
     }
   };
 
-  // Close modal on escape key
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setSelectedService(null);
@@ -512,8 +515,8 @@ const App: React.FC = () => {
              </button>
 
              {/* Grid Container */}
-             {/* Added min-h to prevent layout shift (Jumping) */}
-             <div className="w-full flex items-center justify-center min-h-[850px] md:min-h-[350px] transition-[min-height] duration-300">
+             {/* Dynamic min-height based on mobile (300px for 6 items) or desktop (350px for 15) */}
+             <div className="w-full flex items-center justify-center min-h-[350px] transition-[min-height] duration-300">
                <AnimatePresence mode="wait">
                  <motion.div
                    key={clientPage}
@@ -521,6 +524,7 @@ const App: React.FC = () => {
                    animate={{ opacity: 1 }}
                    exit={{ opacity: 0 }}
                    transition={{ duration: 0.4, ease: "easeInOut" }}
+                   // Mobile: 2 cols (3 rows = 6 items). Desktop: 5 cols (3 rows = 15 items)
                    className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-x-6 gap-y-8 md:gap-x-12 md:gap-y-12 w-full items-start justify-items-center content-start"
                  >
                    {visibleClients.map((client, index) => (
@@ -534,7 +538,6 @@ const App: React.FC = () => {
                          delay: index * 0.02, 
                          ease: "easeOut" 
                        }}
-                       // Removed expensive filter transition on hover to fix "agarrando" scroll lag
                        whileHover={{ scale: 1.05, opacity: 1 }} 
                      >
                         {/* Logo Image */}
@@ -542,7 +545,7 @@ const App: React.FC = () => {
                            src={client.image} 
                            alt={client.name} 
                            className="w-auto max-h-20 md:max-h-28 object-contain filter brightness-0 invert opacity-70 hover:opacity-100 transition-opacity duration-300"
-                           loading="eager" // Load eager to prevent pop-in
+                           loading="eager"
                          />
                      </motion.div>
                    ))}
