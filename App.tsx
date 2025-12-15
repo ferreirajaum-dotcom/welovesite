@@ -12,20 +12,20 @@ import GradientText from './components/GlitchText';
 import CustomCursor from './components/CustomCursor';
 import { Artist } from './types';
 
-// --- Animation Constants & Variants (Refined for Slower, Smoother Feel) ---
-const TRANSITION_EASE: [number, number, number, number] = [0.22, 1, 0.36, 1]; // "Nice" Ease Out - very smooth landing
-const ANIMATION_DURATION = 1.2; // Increased duration for visibility
+// --- Animation Constants & Variants (Optimized for 60FPS Fluidity) ---
+// Using a "Quintic Out" curve: starts quickly, decelerates very smoothly.
+const TRANSITION_EASE: [number, number, number, number] = [0.23, 1, 0.32, 1]; 
+const ANIMATION_DURATION = 1.0; // Balanced duration: not too slow, not too fast.
 
 const fadeInUp: Variants = {
   hidden: { 
     opacity: 0, 
-    y: 60, // Increased distance so the movement is more obvious
-    filter: 'blur(4px)' // Subtle blur on entry for cinematic effect
+    y: 40, // Reduced distance for less pixel travel (smoother)
+    // Removed 'filter: blur' as it causes significant scroll lag (jank) on many devices
   },
   visible: { 
     opacity: 1, 
     y: 0,
-    filter: 'blur(0px)',
     transition: { 
       duration: ANIMATION_DURATION, 
       ease: TRANSITION_EASE 
@@ -38,24 +38,48 @@ const staggerContainer: Variants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.2, // Increased delay between items for a clearer "cascade"
+      staggerChildren: 0.15, // Slightly faster stagger for snappier feel
       delayChildren: 0.1
     }
   }
 };
 
+const serviceEntranceVariants: Variants = {
+  hidden: { opacity: 0, y: 50 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      delay: i * 0.15, // Stagger effect: cards appear one by one
+      duration: 1.0,
+      ease: TRANSITION_EASE
+    }
+  })
+};
+
+const serviceHoverVariants: Variants = {
+  rest: { y: 0, scale: 1, boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)" },
+  hover: { 
+    y: -10, 
+    scale: 1.02, 
+    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.3)",
+    transition: { duration: 0.4, ease: "easeOut" }
+  }
+};
+
 const cardHover: Variants = {
-  rest: { y: 0, boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)" },
+  rest: { y: 0, scale: 1, boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)" },
   hover: { 
     y: -8, 
-    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+    scale: 1.01, // Subtle scale
+    boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
     transition: { duration: 0.4, ease: "easeOut" }
   }
 };
 
 const buttonHover: Variants = {
   rest: { scale: 1 },
-  hover: { scale: 1.05, transition: { duration: 0.4, ease: "easeOut" } },
+  hover: { scale: 1.05, transition: { duration: 0.3, ease: "easeOut" } },
   tap: { scale: 0.95 }
 };
 
@@ -200,7 +224,7 @@ const App: React.FC = () => {
       <motion.nav 
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        transition={{ duration: 1.2, ease: TRANSITION_EASE }}
+        transition={{ duration: 1.0, ease: TRANSITION_EASE }}
         className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-6 md:px-8 py-6 bg-white/80 backdrop-blur-md border-b border-[#213D7A]/10"
       >
         <div className="z-50 cursor-default">
@@ -284,14 +308,14 @@ const App: React.FC = () => {
       <header className="relative h-[100svh] min-h-[600px] flex flex-col items-center justify-center overflow-hidden px-4">
         <motion.div 
           style={{ y, opacity }}
-          className="z-10 text-center flex flex-col items-center w-full max-w-6xl pb-24 md:pb-20"
+          className="z-10 text-center flex flex-col items-center w-full max-w-6xl pb-24 md:pb-20 will-change-transform"
         >
           {/* Main Title */}
           <motion.div 
             className="relative w-full flex justify-center items-center mt-20 md:mt-0"
-            initial={{ opacity: 0, y: 60 }}
+            initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.5, ease: TRANSITION_EASE, delay: 0.2 }}
+            transition={{ duration: 1.2, ease: TRANSITION_EASE, delay: 0.2 }}
           >
             <GradientText 
               text="WEELOVE" 
@@ -303,14 +327,14 @@ const App: React.FC = () => {
           <motion.div
              initial={{ scaleX: 0 }}
              animate={{ scaleX: 1 }}
-             transition={{ duration: 1.8, delay: 0.5, ease: "circOut" }}
+             transition={{ duration: 1.5, delay: 0.4, ease: "circOut" }}
              className="w-full max-w-md h-px bg-gradient-to-r from-transparent via-[#213D7A]/50 to-transparent mt-4 md:mt-8 mb-6 md:mb-8"
           />
 
           <motion.p
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 1.2, ease: TRANSITION_EASE }}
+            transition={{ delay: 0.6, duration: 1.0, ease: TRANSITION_EASE }}
             className="text-base md:text-2xl font-light max-w-xl mx-auto text-[#213D7A]/80 leading-relaxed px-4"
           >
             Social Media
@@ -344,73 +368,74 @@ const App: React.FC = () => {
 
       {/* SERVICES SECTION */}
       <section id="services" className="relative z-10 py-20 bg-white border-b border-[#213D7A]/10">
-        <motion.div 
-          className="max-w-[1400px] mx-auto px-6"
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }} // Trigger when 20% visible
-        >
+        <div className="max-w-[1400px] mx-auto px-6">
           {/* Service Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {SERVICES.map((service, i) => (
               <motion.div
                 key={service.id}
-                variants={fadeInUp}
-                className="group relative flex flex-col justify-between bg-gradient-to-br from-[#566B99] to-[#213D7A] rounded-2xl shadow-xl transition-all duration-300 p-8 overflow-hidden h-full min-h-[300px] border border-transparent"
-                initial="rest"
-                whileHover="hover"
-                custom={cardHover}
-                animate="rest"
+                custom={i}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.2 }}
+                variants={serviceEntranceVariants}
+                className="h-full"
               >
-                <motion.div 
-                  className="absolute inset-0 border-2 border-[#E2BA3D]/0 rounded-2xl pointer-events-none"
-                  variants={{ hover: { borderColor: "rgba(226, 186, 61, 0.3)" } }} 
-                />
-
-                {/* Subtle Decorative Overlay */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
-                
-                <motion.div 
-                  className="relative z-10"
-                  variants={{ hover: { y: -5 } }}
-                  transition={{ duration: 0.3 }}
+                <motion.div
+                  className="group relative flex flex-col justify-between bg-gradient-to-br from-[#566B99] to-[#213D7A] rounded-2xl shadow-xl transition-all duration-300 p-8 overflow-hidden h-full min-h-[300px] border border-transparent will-change-transform"
+                  initial="rest"
+                  whileHover="hover"
+                  variants={serviceHoverVariants}
                 >
-                   {/* Category Badge */}
-                   <span className="inline-block bg-[#E2BA3D] text-[#213D7A] text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-6 shadow-sm">
-                      {service.category}
-                   </span>
+                  <motion.div 
+                    className="absolute inset-0 border-2 border-[#E2BA3D]/0 rounded-2xl pointer-events-none"
+                    variants={{ hover: { borderColor: "rgba(226, 186, 61, 0.3)" } }} 
+                  />
 
-                   {/* Title */}
-                   <h3 className="text-xl md:text-2xl font-heading font-bold text-white mb-4 leading-tight">
-                     {service.title}
-                   </h3>
-                   
-                   {/* Short Description */}
-                   <p className="text-white/85 text-sm font-light leading-relaxed whitespace-pre-line line-clamp-3">
-                     {service.description}
-                   </p>
-                </motion.div>
-                
-                {/* Action Button */}
-                <motion.div 
-                  className="relative z-10 mt-8"
-                  variants={{ hover: { y: -5 } }}
-                  transition={{ duration: 0.3, delay: 0.05 }}
-                >
-                   <button 
-                     onClick={() => setSelectedService(service)}
-                     className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white border border-white/30 px-6 py-2 rounded-full hover:bg-[#E2BA3D] hover:text-[#213D7A] hover:border-[#E2BA3D] transition-all duration-300 group-hover:pl-8"
-                     data-hover="true"
-                   >
-                     Saiba mais
-                     <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 -ml-2 group-hover:ml-0 transition-all duration-300" />
-                   </button>
+                  {/* Subtle Decorative Overlay */}
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
+                  
+                  <motion.div 
+                    className="relative z-10"
+                    variants={{ hover: { y: -5 } }}
+                    transition={{ duration: 0.3 }}
+                  >
+                     {/* Category Badge */}
+                     <span className="inline-block bg-[#E2BA3D] text-[#213D7A] text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-6 shadow-sm">
+                        {service.category}
+                     </span>
+
+                     {/* Title */}
+                     <h3 className="text-xl md:text-2xl font-heading font-bold text-white mb-4 leading-tight">
+                       {service.title}
+                     </h3>
+                     
+                     {/* Short Description */}
+                     <p className="text-white/85 text-sm font-light leading-relaxed whitespace-pre-line line-clamp-3">
+                       {service.description}
+                     </p>
+                  </motion.div>
+                  
+                  {/* Action Button */}
+                  <motion.div 
+                    className="relative z-10 mt-8"
+                    variants={{ hover: { y: -5 } }}
+                    transition={{ duration: 0.3, delay: 0.05 }}
+                  >
+                     <button 
+                       onClick={() => setSelectedService(service)}
+                       className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white border border-white/30 px-6 py-2 rounded-full hover:bg-[#E2BA3D] hover:text-[#213D7A] hover:border-[#E2BA3D] transition-all duration-300 group-hover:pl-8"
+                       data-hover="true"
+                     >
+                       Saiba mais
+                       <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 -ml-2 group-hover:ml-0 transition-all duration-300" />
+                     </button>
+                  </motion.div>
                 </motion.div>
               </motion.div>
             ))}
           </div>
-        </motion.div>
+        </div>
       </section>
 
       {/* EXPERIENCE / QUEM SOMOS SECTION */}
@@ -456,7 +481,7 @@ const App: React.FC = () => {
       </section>
 
       {/* CLIENTS SECTION - Compact version */}
-      <section id="clientes" className="relative z-10 py-10 md:py-16 bg-[#213D7A] w-full">
+      <section id="clientes" className="relative z-10 py-10 md:py-16 bg-[#213D7A] w-full overflow-hidden">
         <div className="max-w-[1400px] mx-auto px-4 md:px-6 relative">
           
           {/* Header */}
@@ -478,6 +503,7 @@ const App: React.FC = () => {
           <div className="flex items-center justify-center relative">
              {/* Previous Button */}
              <button 
+               type="button"
                onClick={handlePrevClient}
                className="hidden md:flex absolute -left-12 lg:-left-24 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors p-2 z-20"
                aria-label="Previous Clients"
@@ -486,39 +512,37 @@ const App: React.FC = () => {
              </button>
 
              {/* Grid Container */}
-             <div className="w-full flex items-center justify-center min-h-[200px] md:min-h-[300px]">
+             {/* Added min-h to prevent layout shift (Jumping) */}
+             <div className="w-full flex items-center justify-center min-h-[850px] md:min-h-[350px] transition-[min-height] duration-300">
                <AnimatePresence mode="wait">
                  <motion.div
                    key={clientPage}
-                   initial={{ opacity: 0, x: 20 }}
-                   animate={{ opacity: 1, x: 0 }}
-                   exit={{ opacity: 0, x: -20 }}
-                   transition={{ duration: 0.6, ease: "circOut" }}
-                   // Compact layout: 2 cols on mobile, 4 on tablet, 5 on desktop
-                   // Reduced gaps to look more like a strip
-                   className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-x-6 gap-y-8 md:gap-x-12 md:gap-y-12 w-full items-center justify-items-center"
+                   initial={{ opacity: 0 }}
+                   animate={{ opacity: 1 }}
+                   exit={{ opacity: 0 }}
+                   transition={{ duration: 0.4, ease: "easeInOut" }}
+                   className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-x-6 gap-y-8 md:gap-x-12 md:gap-y-12 w-full items-start justify-items-center content-start"
                  >
                    {visibleClients.map((client, index) => (
                      <motion.div
                        key={client.id}
-                       className="w-full flex items-center justify-center h-24 md:h-32 px-2 md:px-4"
-                       initial={{ opacity: 0, y: 30 }}
+                       className="w-full flex items-center justify-center h-24 md:h-32 px-2 md:px-4 will-change-transform"
+                       initial={{ opacity: 0, y: 15 }}
                        animate={{ opacity: 1, y: 0 }}
                        transition={{ 
-                         duration: 0.8, 
-                         delay: index * 0.05, 
+                         duration: 0.4, 
+                         delay: index * 0.02, 
                          ease: "easeOut" 
                        }}
-                       whileHover={{ scale: 1.1, opacity: 1, filter: "brightness(1.2)" }}
+                       // Removed expensive filter transition on hover to fix "agarrando" scroll lag
+                       whileHover={{ scale: 1.05, opacity: 1 }} 
                      >
                         {/* Logo Image */}
                          <img 
                            src={client.image} 
                            alt={client.name} 
-                           // Brightness-0 Invert makes any colored image white.
-                           // Opacity allows for a subtle "inactive" look until hovered.
-                           className="w-auto max-h-20 md:max-h-28 object-contain filter brightness-0 invert opacity-70 hover:opacity-100 transition-all duration-300"
-                           loading="lazy"
+                           className="w-auto max-h-20 md:max-h-28 object-contain filter brightness-0 invert opacity-70 hover:opacity-100 transition-opacity duration-300"
+                           loading="eager" // Load eager to prevent pop-in
                          />
                      </motion.div>
                    ))}
@@ -528,6 +552,7 @@ const App: React.FC = () => {
 
              {/* Next Button */}
              <button 
+               type="button"
                onClick={handleNextClient}
                className="hidden md:flex absolute -right-12 lg:-right-24 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors p-2 z-20"
                aria-label="Next Clients"
@@ -539,12 +564,14 @@ const App: React.FC = () => {
           {/* Mobile Navigation (Visible only on small screens) */}
           <div className="flex md:hidden justify-center gap-8 mt-12">
              <button 
+               type="button"
                onClick={handlePrevClient}
                className="text-white/50 hover:text-white transition-colors p-2"
              >
                <ChevronLeft className="w-8 h-8" />
              </button>
              <button 
+               type="button"
                onClick={handleNextClient}
                className="text-white/50 hover:text-white transition-colors p-2"
              >
@@ -623,7 +650,7 @@ const App: React.FC = () => {
                         key={index}
                         variants={fadeInUp}
                         onClick={() => setActiveAccordion(isOpen ? null : index)}
-                        className="flex flex-col w-full bg-white border border-[#213D7A]/15 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 group cursor-pointer overflow-hidden relative"
+                        className="flex flex-col w-full bg-white border border-[#213D7A]/15 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 group cursor-pointer overflow-hidden relative will-change-transform"
                         whileHover={{ y: -4, borderColor: "rgba(33, 61, 122, 0.3)" }}
                         transition={{ duration: 0.3 }}
                        >
