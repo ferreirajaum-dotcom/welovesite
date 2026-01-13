@@ -1,44 +1,20 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
-*/
-
 
 import React, { useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence, Variants } from 'framer-motion';
-import { Menu, X, Mail, ChevronLeft, ChevronRight, ArrowRight, ChevronDown } from 'lucide-react';
+import { Menu, X, Mail, ChevronLeft, ChevronRight, ArrowRight, ChevronDown, Clapperboard, ThumbsUp, Camera, Lightbulb, Instagram } from 'lucide-react';
 import FluidBackground from './components/FluidBackground';
-import GradientText from './components/GlitchText';
 import CustomCursor from './components/CustomCursor';
-import { Artist } from './types';
 
-// --- Animation Constants & Variants (Optimized for 60FPS Fluidity) ---
-const TRANSITION_EASE: [number, number, number, number] = [0.23, 1, 0.32, 1]; 
-const ANIMATION_DURATION = 0.8; // Slightly faster for snappier feel
+// --- Constantes de Animação ---
+const TRANSITION_EASE: [number, number, number, number] = [0.23, 1, 0.32, 1];
+const ANIMATION_DURATION = 0.8;
 
 const fadeInUp: Variants = {
-  hidden: { 
-    opacity: 0, 
-    y: 30, // Reduced further for smoother mobile performance
-  },
+  hidden: { opacity: 0, y: 30 },
   visible: { 
     opacity: 1, 
     y: 0,
-    transition: { 
-      duration: ANIMATION_DURATION, 
-      ease: TRANSITION_EASE 
-    }
-  }
-};
-
-const staggerContainer: Variants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1, 
-      delayChildren: 0.05
-    }
+    transition: { duration: ANIMATION_DURATION, ease: TRANSITION_EASE }
   }
 };
 
@@ -47,742 +23,488 @@ const serviceEntranceVariants: Variants = {
   visible: (i: number) => ({
     opacity: 1,
     y: 0,
-    transition: {
-      delay: i * 0.1, 
-      duration: 0.8,
-      ease: TRANSITION_EASE
-    }
+    transition: { delay: i * 0.1, duration: 0.8, ease: TRANSITION_EASE }
   })
 };
 
-const serviceHoverVariants: Variants = {
-  rest: { y: 0, scale: 1, boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)" },
-  hover: { 
-    y: -5, // Reduced movement
-    scale: 1.01, 
-    boxShadow: "0 20px 25px -12px rgba(0, 0, 0, 0.2)",
-    transition: { duration: 0.3, ease: "easeOut" }
-  }
-};
+// --- Dados ---
+const CLIENTS_BR = [
+  { id: 'br1', name: 'Trisoft', image: 'https://i.postimg.cc/PqDDB7Bg/cliente-logo-1.png' },
+  { id: 'br2', name: 'Clínica ISTO', image: 'https://i.postimg.cc/zfhh9Qsq/cliente-logo-2.png' },
+  { id: 'br3', name: 'Priscila Mattos Venturi', image: 'https://i.postimg.cc/q7KK9FPJ/cliente-logo-3.png' },
+  { id: 'br4', name: 'Anexo', image: 'https://i.postimg.cc/3wGGPqsK/cliente-logo-4.png' },
+  { id: 'br5', name: 'NRC Arq Design', image: 'https://i.postimg.cc/3wGGPqsJ/cliente-logo-5.png' },
+  { id: 'br6', name: 'CIDAD', image: 'https://i.postimg.cc/5tzzZrht/cliente-logo-6.png' },
+  { id: 'br7', name: 'Simcauto', image: 'https://i.postimg.cc/50Mz13Jm/cliente-logo-19.png' },
+  { id: 'br8', name: 'Adriana Farias', image: 'https://i.postimg.cc/kG2qp0Z3/cliente-logo-22.png' },
+];
 
-const buttonHover: Variants = {
-  rest: { scale: 1 },
-  hover: { scale: 1.05, transition: { duration: 0.3, ease: "easeOut" } },
-  tap: { scale: 0.95 }
-};
-
-// --- Data Constants ---
-const CLIENTS: Artist[] = [
-  { id: '1', name: 'Trisoft', genre: 'Parceiro', day: '2025', image: 'https://i.postimg.cc/PqDDB7Bg/cliente-logo-1.png', description: 'Soluções Acústicas Sustentáveis' },
-  { id: '2', name: 'Clínica ISTO', genre: 'Parceiro', day: '2025', image: 'https://i.postimg.cc/zfhh9Qsq/cliente-logo-2.png', description: 'Saúde e Bem-estar' },
-  { id: '3', name: 'Priscila Mattos Venturi', genre: 'Parceiro', day: '2025', image: 'https://i.postimg.cc/q7KK9FPJ/cliente-logo-3.png', description: 'Arquitetura e Interiores' },
-  { id: '4', name: 'Anexo', genre: 'Parceiro', day: '2025', image: 'https://i.postimg.cc/3wGGPqsK/cliente-logo-4.png', description: 'Instituto de Tecnologia' },
-  { id: '5', name: 'NRC Arq Design', genre: 'Parceiro', day: '2025', image: 'https://i.postimg.cc/3wGGPqsJ/cliente-logo-5.png', description: 'Arq . Design' },
-  { id: '6', name: 'CIDAD', genre: 'Parceiro', day: '2025', image: 'https://i.postimg.cc/5tzzZrht/cliente-logo-6.png', description: 'Centro de Informação' },
-  { id: '7', name: 'Croni', genre: 'Parceiro', day: '2025', image: 'https://i.postimg.cc/PqDDB7gx/cliente-logo-7.png', description: 'Store Makers' },
-  { id: '8', name: 'RetailBox', genre: 'Parceiro', day: '2025', image: 'https://i.postimg.cc/6QZZDPkq/cliente-logo-8.png', description: 'Projetos para varejo' },
-  { id: '9', name: 'Alupoli', genre: 'Parceiro', day: '2025', image: 'https://i.postimg.cc/W4ZZQyBt/cliente-logo-9.png', description: 'Coberturas e Fachadas' },
-  { id: '10', name: 'Cilene Lupi', genre: 'Parceiro', day: '2025', image: 'https://i.postimg.cc/bvnnK572/cliente-logo-10.png', description: 'Arq + Design' },
-  { id: '11', name: 'RLX Rollox', genre: 'Parceiro', day: '2025', image: 'https://i.postimg.cc/85VvDHGP/cliente-logo-11.png', description: 'Home Decor' },
-  { id: '12', name: 'Escola de Empreendedores', genre: 'Parceiro', day: '2025', image: 'https://i.postimg.cc/LsPPrWcg/cliente-logo-12.png', description: 'Educação Empreendedora' },
-  { id: '13', name: 'Angelina Bunselmeyer', genre: 'Parceiro', day: '2025', image: 'https://i.postimg.cc/W3PZjnV1/cliente-logo-13.png', description: 'Arquitetura' },
-  { id: '14', name: 'NNe + Senac', genre: 'Parceiro', day: '2025', image: 'https://i.postimg.cc/63NZw0Kq/cliente-logo-14.png', description: 'Núcleo Nordeste' },
-  { id: '15', name: 'Clichê 40', genre: 'Parceiro', day: '2025', image: 'https://i.postimg.cc/Y9wFk37h/cliente-logo-15.png', description: 'Papelaria de aconchego' },
-  { id: '16', name: 'Spazio Arquitetura', genre: 'Parceiro', day: '2025', image: 'https://i.postimg.cc/Ssp9qr4z/cliente-logo-16.png', description: 'Arquitetura' },
-  { id: '17', name: 'IM Sound', genre: 'Parceiro', day: '2025', image: 'https://i.postimg.cc/rmL4cJTD/cliente-logo-17.png', description: 'Áudio Profissional' },
-  { id: '18', name: 'UpSoul', genre: 'Parceiro', day: '2025', image: 'https://i.postimg.cc/C1V8YN0s/cliente-logo-18.png', description: 'Desenvolvimento Pessoal' },
-  { id: '19', name: 'Simcauto', genre: 'Parceiro', day: '2025', image: 'https://i.postimg.cc/50Mz13Jm/cliente-logo-19.png', description: 'Automotivo' },
-  { id: '20', name: 'Adriana Farias', genre: 'Parceiro', day: '2025', image: 'https://i.postimg.cc/kG2qp0Z3/cliente-logo-22.png', description: 'Interiores' },
+const CLIENTS_PT = [
+  { id: 'pt1', name: 'RetailBox', image: 'https://i.postimg.cc/6QZZDPkq/cliente-logo-8.png' },
+  { id: 'pt2', name: 'Alupoli', image: 'https://i.postimg.cc/W4ZZQyBt/cliente-logo-9.png' },
+  { id: 'pt3', name: 'Cilene Lupi', image: 'https://i.postimg.cc/bvnnK572/cliente-logo-10.png' },
+  { id: 'pt4', name: 'RLX Rollox', image: 'https://i.postimg.cc/85VvDHGP/cliente-logo-11.png' },
+  { id: 'pt5', name: 'Escola de Empreendedores', image: 'https://i.postimg.cc/LsPPrWcg/cliente-logo-12.png' },
+  { id: 'pt6', name: 'Angelina Bunselmeyer', image: 'https://i.postimg.cc/W3PZjnV1/cliente-logo-13.png' },
+  { id: 'pt7', name: 'Croni', image: 'https://i.postimg.cc/PqDDB7gx/cliente-logo-7.png' },
 ];
 
 const SERVICES = [
   {
     id: 1,
-    category: "SERVIÇO",
+    icon: <Clapperboard className="w-8 h-8" />,
     title: "Videomaker",
-    description: "Profissionais (individuais ou empresas)\nPúblico em Geral (registo de eventos privados)",
-    fullDescription: "Produzimos vídeos profissionais para empresas, profissionais individuais e público em geral. Seja para registar eventos privados, criar conteúdo institucional ou promover a sua marca, cuidamos de cada detalhe: captação de imagens, edição, roteiro, direção e estratégia. Transformamos momentos em histórias que conectam e encantam.",
-    ctaText: "Entre em Contato",
+    description: "Produzimos vídeos profissionais para empresas, profissionais independentes e público em geral.",
+    fullDescription: "Produzimos vídeos profissionais para empresas, profissionais independentes e público em geral. Seja para registar eventos privados, criar conteúdos institucionais ou promover a sua marca, cuidamos de cada detalhe: captação de imagem, edição, guião, direcção e estratégia. Transformamos momentos em histórias que criam ligação e despertam emoção.",
+    cta: "Solicite um orçamento",
+    subText: "Vamos falar"
   },
   {
     id: 2,
-    category: "SERVIÇO",
+    icon: <ThumbsUp className="w-8 h-8" />,
     title: "Gestão de Redes Sociais",
-    description: "Instagram, Facebook, Youtube e Linkedin",
-    fullDescription: "Gerimos as suas redes sociais de forma estratégica e criativa. Atuamos no Instagram, Facebook, Youtube e Linkedin, criando conteúdo relevante, planejando publicações, interagindo com a audiência e analisando métricas para fortalecer a presença digital da sua marca.",
-    ctaText: "Solicite um Orçamento",
+    description: "Gerimos as suas redes sociais de forma estratégica e criativa.",
+    fullDescription: "Gerimos as suas redes sociais de forma estratégica e criativa. Atuamos no Instagram, Facebook, YouTube e LinkedIn, desenvolvendo conteúdos relevantes, planeando publicações, interagindo com a audiência e analisando métricas para reforçar a presença digital da sua marca.",
+    cta: "Solicite um orçamento",
+    subText: "Vamos pensar juntos"
   },
   {
     id: 3,
-    category: "EDUCAÇÃO",
-    title: "Formação em Vídeos com Telemóvel",
-    description: "Todo o tipo de público. Técnicas aliadas à sensibilidade para gravação e edição.",
-    fullDescription: "Aprenda a criar vídeos profissionais usando apenas o seu telemóvel. Formação prática para todo o tipo de público, combinando técnicas de gravação, edição e sensibilidade artística. Ideal para quem quer produzir conteúdo de qualidade sem equipamentos caros.",
-    ctaText: "Saiba Mais sobre a Formação",
+    icon: <Camera className="w-8 h-8" />,
+    title: "Formação",
+    description: "Aprenda a criar vídeos profissionais utilizando apenas o seu telemóvel.",
+    fullDescription: "Aprenda a criar vídeos profissionais utilizando apenas o seu telemóvel. Formação prática para todo o tipo de público, que combina técnicas de captação, edição e sensibilidade artística. Ideal para quem pretende produzir conteúdos de qualidade sem recorrer a equipamentos dispendiosos.",
+    cta: "Saiba mais como funciona",
+    subText: "Descobrir como funciona"
   },
   {
     id: 4,
-    category: "CONSULTORIA",
-    title: "Consultoria Online: Da Criação do Vídeo ao Post",
-    description: "Profissionais de qualquer área que querem gravar conteúdo em vídeo...",
-    fullDescription: "Consultoria personalizada para profissionais de qualquer área que desejam criar conteúdo em vídeo, mas não sabem por onde começar. Orientamos sobre uso de gadgets, últimas novidades do Instagram, técnicas de gravação, edição e estratégias de publicação. Tudo online, no seu ritmo.",
-    ctaText: "Agende sua Consultoria",
+    icon: <Lightbulb className="w-8 h-8" />,
+    title: "Consultoria",
+    description: "Consultoria personalizada ao vivo com a Munik Rangel.",
+    fullDescription: "Consultoria personalizada ao vivo com a Munik Rangel. Para profissionais de qualquer área que pretendem criar conteúdos em vídeo, mas não sabem por onde começar. Orientação sobre luz portátil, microfone, cenário, funcionalidades do Instagram, técnicas de captação, edição e estratégias de publicação. Tudo online, ao seu ritmo.",
+    cta: "Agende a sua consultoria",
+    subText: "Explica melhor"
   }
-];
-
-const NAV_ITEMS = [
-  { label: 'Quem somos', id: 'experience' },
-  { label: 'Clientes', id: 'clientes' },
-  { label: 'Garanta', id: 'tickets' }
 ];
 
 const UNIQUE_ITEMS = [
   {
     title: "Produção de conteúdos em vídeo com telemóvel que contam a sua história com emoção e impacto",
-    answer: "Utilizamos técnicas profissionais de captação e edição mobile, criando vídeos autênticos que conectam emocionalmente com o seu público e fortalecem a identidade da sua marca."
+    answer: "Utilizamos técnicas profissionais de captação e edição mobile, criando vídeos autênticos que ligam emocionalmente com o seu público."
   },
   {
     title: "Estratégia digital adaptada à identidade e aos objetivos da sua marca",
-    answer: "Desenvolvemos um plano personalizado de conteúdo e presença digital, alinhado aos valores da sua marca e focado em resultados mensuráveis nas redes sociais."
+    answer: "Desenvolvemos um plano personalizado de conteúdo alinhado aos valores da sua marca e focado em resultados reais."
   },
   {
     title: "Há SEMPRE um plano exclusivo feito à sua medida.",
-    answer: "Cada projeto é único. Analisamos o seu negócio, público-alvo e objetivos para criar uma estratégia 100% personalizada que atenda às suas necessidades específicas."
+    answer: "Cada projeto é único. Analisamos o seu negócio para criar uma estratégia 100% personalizada."
   }
 ];
 
 const App: React.FC = () => {
-  const { scrollYProgress } = useScroll();
-  const y = useTransform(scrollYProgress, [0, 1], [0, -100]);
-  const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<typeof SERVICES[0] | null>(null);
   const [activeAccordion, setActiveAccordion] = useState<number | null>(null);
-  
-  // Clients Pagination Logic with Responsive detection
   const [clientPage, setClientPage] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Detect Mobile
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile(); // Check on mount
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Reset page when switching modes to avoid index issues
-  useEffect(() => {
-    setClientPage(0);
-  }, [isMobile]);
-
-  // Dynamic items per page: 6 for mobile (2cols * 3rows), 15 for desktop (5cols * 3rows)
   const clientsPerPage = isMobile ? 6 : 15;
-  const totalClientPages = Math.ceil(CLIENTS.length / clientsPerPage);
+  const allClients = [...CLIENTS_PT, ...CLIENTS_BR]; 
+  const totalClientPages = Math.ceil(allClients.length / clientsPerPage);
+  const visibleClients = allClients.slice(clientPage * clientsPerPage, (clientPage + 1) * clientsPerPage);
 
-  const handlePrevClient = () => {
-    setClientPage((prev) => (prev - 1 + totalClientPages) % totalClientPages);
-  };
-
-  const handleNextClient = () => {
-    setClientPage((prev) => (prev + 1) % totalClientPages);
-  };
-
-  const visibleClients = CLIENTS.slice(
-    clientPage * clientsPerPage,
-    (clientPage + 1) * clientsPerPage
-  );
+  const handlePrevClient = () => setClientPage((prev) => (prev - 1 + totalClientPages) % totalClientPages);
+  const handleNextClient = () => setClientPage((prev) => (prev + 1) % totalClientPages);
 
   const scrollToSection = (id: string) => {
     setMobileMenuOpen(false);
     const element = document.getElementById(id);
     if (element) {
-      const headerOffset = 100;
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.scrollY - headerOffset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
+      window.scrollTo({ top: element.offsetTop - 100, behavior: 'smooth' });
     }
   };
 
-  useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setSelectedService(null);
-    };
-    window.addEventListener('keydown', handleEsc);
-    return () => window.removeEventListener('keydown', handleEsc);
-  }, []);
-
   return (
-    <div className="relative min-h-screen text-[#213D7A] selection:bg-[#E2BA3D] selection:text-[#213D7A] cursor-auto md:cursor-none overflow-x-hidden">
+    <div className="relative min-h-screen text-[#213D7A] selection:bg-[#E2BA3D] selection:text-[#213D7A] bg-white">
       <CustomCursor />
       <FluidBackground />
+
+      {/* TOP CRAWL BAR */}
+      <div className="fixed top-0 left-0 right-0 z-[60] bg-[#961D1D] text-white py-2 overflow-hidden border-b border-[#E2BA3D]">
+        <motion.div 
+          className="whitespace-nowrap flex items-center gap-8"
+          animate={{ x: [0, -1000] }}
+          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+        >
+          {[...Array(10)].map((_, i) => (
+            <div key={i} className="flex items-center gap-4">
+              <span className="font-bold uppercase tracking-tighter text-sm">Em breve: 4º Workshop de Vídeos e Edição com Telemóvel!</span>
+              <a 
+                href="https://forms.gle/F4SHYr5nRvPWCscQ9" 
+                target="_blank" 
+                className="bg-[#E2BA3D] text-[#213D7A] px-3 py-0.5 rounded-full text-[10px] font-black uppercase hover:scale-105 transition-transform"
+              >
+                Pré-inscrição aqui
+              </a>
+            </div>
+          ))}
+        </motion.div>
+      </div>
       
       {/* Navigation */}
       <motion.nav 
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        transition={{ duration: 1.0, ease: TRANSITION_EASE }}
-        className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-6 md:px-8 py-6 bg-white/80 backdrop-blur-md border-b border-[#213D7A]/10"
+        className="fixed top-9 left-0 right-0 z-40 flex items-center justify-between px-6 md:px-12 py-5 bg-white/90 backdrop-blur-md border-b border-[#213D7A]/10 shadow-sm"
       >
-        <div className="z-50 cursor-default">
+        <div className="z-50 cursor-pointer" onClick={() => scrollToSection('inicio')}>
            <img 
              src="https://i.postimg.cc/wvL4w0q5/logo-wee.png" 
-             alt="WEELOVE" 
+             alt="WEE MARKETING" 
              className="h-8 md:h-10 w-auto object-contain"
            />
         </div>
         
-        {/* Desktop Menu */}
-        <div className="hidden md:flex gap-10 text-sm font-bold tracking-widest uppercase">
-          {NAV_ITEMS.map((item) => (
-            <motion.button 
-              key={item.label} 
-              onClick={() => scrollToSection(item.id)}
-              className="hover:text-[#961D1D] transition-colors text-[#213D7A] cursor-pointer bg-transparent border-none relative group"
-              data-hover="true"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+        <div className="hidden lg:flex gap-8 text-[11px] font-bold tracking-widest uppercase">
+          {['Início', 'O que fazemos', 'Quem somos', 'Clientes', 'Portefólio', 'Contacto'].map((label) => (
+            <button 
+              key={label} 
+              onClick={() => scrollToSection(label.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, '-'))}
+              className="hover:text-[#961D1D] transition-colors relative group"
             >
-              {item.label}
+              {label}
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#961D1D] transition-all duration-300 group-hover:w-full" />
-            </motion.button>
+            </button>
           ))}
         </div>
-        <motion.button 
-          onClick={() => scrollToSection('tickets')}
-          className="hidden md:inline-block border border-[#213D7A] px-8 py-3 text-xs font-bold tracking-widest uppercase hover:bg-[#213D7A] hover:text-white transition-all duration-300 text-[#213D7A] cursor-pointer bg-transparent rounded-full"
-          data-hover="true"
-          variants={buttonHover}
-          initial="rest"
-          whileHover="hover"
-          whileTap="tap"
-        >
-          Contacto
-        </motion.button>
 
-        {/* Mobile Menu Toggle */}
         <button 
-          className="md:hidden text-[#213D7A] z-50 relative w-10 h-10 flex items-center justify-center"
+          className="lg:hidden text-[#213D7A] z-50"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
-           {mobileMenuOpen ? <X color="white" /> : <Menu />}
+           {mobileMenuOpen ? <X /> : <Menu />}
         </button>
       </motion.nav>
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile Menu */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="fixed inset-0 z-30 bg-[#213D7A]/95 backdrop-blur-xl flex flex-col items-center justify-center gap-8 md:hidden text-white"
+            initial={{ opacity: 0, x: '100%' }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: '100%' }}
+            className="fixed inset-0 z-30 bg-[#213D7A] flex flex-col items-center justify-center gap-8 text-white"
           >
-            {NAV_ITEMS.map((item) => (
+            {['Início', 'O que fazemos', 'Quem somos', 'Clientes', 'Portefólio', 'Contacto'].map((label) => (
               <button
-                key={item.label}
-                onClick={() => scrollToSection(item.id)}
-                className="text-4xl font-heading font-bold hover:text-[#E2BA3D] transition-colors uppercase bg-transparent border-none text-white"
+                key={label}
+                onClick={() => scrollToSection(label.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, '-'))}
+                className="text-3xl font-heading font-bold uppercase"
               >
-                {item.label}
+                {label}
               </button>
             ))}
-            <button 
-              onClick={() => scrollToSection('tickets')}
-              className="mt-8 border border-white px-10 py-4 text-sm font-bold tracking-widest uppercase bg-white text-[#213D7A]"
-            >
-              Contacto
-            </button>
-            
-            <div className="absolute bottom-10 flex gap-6">
-               <a href="https://x.com/GoogleAIStudio" className="text-white/50 hover:text-white transition-colors">Twitter</a>
-            </div>
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* HERO SECTION */}
-      <header className="relative h-[100svh] min-h-[600px] flex flex-col items-center justify-center overflow-hidden px-4">
-        <motion.div 
-          style={{ y, opacity }}
-          className="z-10 text-center flex flex-col items-center w-full max-w-6xl pb-24 md:pb-20 will-change-transform"
-        >
-          {/* Main Title */}
-          <motion.div 
-            className="relative w-full flex justify-center items-center mt-20 md:mt-0"
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, ease: TRANSITION_EASE, delay: 0.2 }}
-          >
-            <GradientText 
-              text="WEELOVE" 
-              as="h1" 
-              className="text-[15vw] md:text-[14vw] leading-[0.9] font-black tracking-tighter text-center text-[#213D7A]" 
-            />
-          </motion.div>
-          
-          <motion.div
-             initial={{ scaleX: 0 }}
-             animate={{ scaleX: 1 }}
-             transition={{ duration: 1.5, delay: 0.4, ease: "circOut" }}
-             className="w-full max-w-md h-px bg-gradient-to-r from-transparent via-[#213D7A]/50 to-transparent mt-4 md:mt-8 mb-6 md:mb-8"
-          />
-
-          <motion.p
+      <header id="inicio" className="relative h-screen flex flex-col items-center justify-center pt-20">
+        <div className="max-w-5xl mx-auto px-6 text-center z-10">
+          <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 1.0, ease: TRANSITION_EASE }}
-            className="text-base md:text-2xl font-light max-w-xl mx-auto text-[#213D7A]/80 leading-relaxed px-4"
+            className="text-4xl md:text-7xl font-heading font-black leading-[1.1] mb-6"
           >
-            Social Media
+            Transformamos presença digital em resultados reais.
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-lg md:text-xl font-light mb-10 text-[#213D7A]/80 max-w-3xl mx-auto"
+          >
+            Estratégia, Formação, Conteúdo e Criatividade para marcas que querem crescer no digital.
           </motion.p>
-        </motion.div>
-
-        {/* MARQUEE */}
-        <div className="absolute bottom-12 md:bottom-16 left-0 w-full py-4 md:py-6 bg-[#213D7A] text-white z-20 overflow-hidden border-y-4 border-[#E2BA3D] shadow-lg">
-          <motion.div 
-            className="flex w-fit will-change-transform"
-            animate={{ x: "-50%" }}
-            transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+          <motion.button 
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => scrollToSection('contacto')}
+            className="bg-[#213D7A] text-white px-10 py-5 rounded-full font-bold uppercase tracking-widest text-sm shadow-xl hover:bg-[#961D1D] transition-colors"
           >
-            {/* Duplicate content for seamless loop */}
-            {[0, 1].map((key) => (
-              <div key={key} className="flex whitespace-nowrap shrink-0">
-                {[...Array(4)].map((_, i) => (
-                  <button 
-                    key={i} 
-                    onClick={() => scrollToSection('services')}
-                    className="text-3xl md:text-7xl font-heading font-black px-8 flex items-center gap-4 bg-transparent border-none cursor-pointer hover:text-[#E2BA3D] transition-colors"
-                  >
-                    WEELOVE WORKSHOP 2026 <span className="text-[#E2BA3D] text-2xl md:text-4xl">●</span> 
-                  </button>
-                ))}
-              </div>
-            ))}
-          </motion.div>
+            Fale connosco
+          </motion.button>
+        </div>
+        
+        {/* Video Background */}
+        <div className="absolute inset-0 -z-10 opacity-10 flex items-center justify-center overflow-hidden">
+           <iframe 
+             src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&controls=0&loop=1&playlist=dQw4w9WgXcQ" 
+             className="w-[150%] h-[150%] object-cover pointer-events-none"
+             title="Munik Intro"
+           ></iframe>
         </div>
       </header>
 
-      {/* SERVICES SECTION */}
-      <section id="services" className="relative z-10 py-20 bg-white border-b border-[#213D7A]/10">
-        <div className="max-w-[1400px] mx-auto px-6">
-          {/* Service Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* SERVIÇOS SECTION */}
+      <section id="o-que-fazemos" className="py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-heading font-black uppercase mb-4">O que fazemos</h2>
+            <div className="w-20 h-1.5 bg-[#E2BA3D] mx-auto rounded-full" />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {SERVICES.map((service, i) => (
               <motion.div
                 key={service.id}
                 custom={i}
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: true, amount: 0.2 }}
+                viewport={{ once: true }}
                 variants={serviceEntranceVariants}
-                className="h-full"
+                className="bg-gray-50 p-8 rounded-[2rem] border border-gray-100 flex flex-col justify-between hover:shadow-2xl transition-shadow group"
               >
-                <motion.div
-                  className="group relative flex flex-col justify-between bg-gradient-to-br from-[#566B99] to-[#213D7A] rounded-2xl shadow-xl transition-all duration-300 p-8 overflow-hidden h-full min-h-[300px] border border-transparent will-change-transform"
-                  initial="rest"
-                  whileHover="hover"
-                  variants={serviceHoverVariants}
-                >
-                  <motion.div 
-                    className="absolute inset-0 border-2 border-[#E2BA3D]/0 rounded-2xl pointer-events-none"
-                    variants={{ hover: { borderColor: "rgba(226, 186, 61, 0.3)" } }} 
-                  />
-
-                  {/* Subtle Decorative Overlay */}
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
-                  
-                  <motion.div 
-                    className="relative z-10"
-                    variants={{ hover: { y: -5 } }}
-                    transition={{ duration: 0.3 }}
+                <div>
+                  <div className="text-[#E2BA3D] mb-6 group-hover:scale-110 transition-transform origin-left">{service.icon}</div>
+                  <h3 className="text-xl font-heading font-bold mb-4">{service.title}</h3>
+                  <p className="text-sm text-[#213D7A]/70 mb-8 leading-relaxed line-clamp-4">{service.description}</p>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <button 
+                    onClick={() => setSelectedService(service)}
+                    className="text-[10px] font-black uppercase tracking-widest bg-[#213D7A] text-white py-3 rounded-full hover:bg-[#961D1D] transition-colors"
                   >
-                     {/* Category Badge */}
-                     <span className="inline-block bg-[#E2BA3D] text-[#213D7A] text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-6 shadow-sm">
-                        {service.category}
-                     </span>
-
-                     {/* Title */}
-                     <h3 className="text-xl md:text-2xl font-heading font-bold text-white mb-4 leading-tight">
-                       {service.title}
-                     </h3>
-                     
-                     {/* Short Description */}
-                     <p className="text-white/85 text-sm font-light leading-relaxed whitespace-pre-line line-clamp-3">
-                       {service.description}
-                     </p>
-                  </motion.div>
-                  
-                  {/* Action Button */}
-                  <motion.div 
-                    className="relative z-10 mt-8"
-                    variants={{ hover: { y: -5 } }}
-                    transition={{ duration: 0.3, delay: 0.05 }}
-                  >
-                     <button 
-                       onClick={() => setSelectedService(service)}
-                       className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white border border-white/30 px-6 py-2 rounded-full hover:bg-[#E2BA3D] hover:text-[#213D7A] hover:border-[#E2BA3D] transition-all duration-300 group-hover:pl-8"
-                       data-hover="true"
-                     >
-                       Saiba mais
-                       <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 -ml-2 group-hover:ml-0 transition-all duration-300" />
-                     </button>
-                  </motion.div>
-                </motion.div>
+                    {service.cta}
+                  </button>
+                  <span className="text-[9px] uppercase font-bold text-center opacity-40">{service.subText}</span>
+                </div>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* EXPERIENCE / QUEM SOMOS SECTION */}
-      <section id="experience" className="relative z-10 py-20 md:py-32 bg-white border-t border-[#213D7A]/10 overflow-hidden">
-        
-        <div className="max-w-[1600px] mx-auto px-4 md:px-6 relative">
-          
-          {/* Intro Text */}
-          <motion.div 
-            className="max-w-4xl mx-auto text-center"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={fadeInUp}
-          >
-             <h2 className="text-4xl md:text-7xl font-heading font-bold mb-4 leading-tight text-[#213D7A]">
-                Quem <br/> <GradientText text="SOMOS" className="text-5xl md:text-8xl" />
-              </h2>
-              <motion.h3 
-                variants={fadeInUp}
-                className="text-2xl md:text-3xl font-heading font-bold text-[#E2BA3D] mb-12 uppercase tracking-wide"
-              >
-                Munik Rangel
-              </motion.h3>
-
-              <motion.div 
-                variants={fadeInUp}
-                className="text-base md:text-xl text-[#213D7A]/80 font-light leading-relaxed text-left mx-auto max-w-3xl"
-              >
-                <ul className="space-y-4 list-disc pl-5 marker:text-[#E2BA3D]">
-                  <li>Estratega de marketing brasileira, há 27 anos.</li>
-                  <li>Certificada pela New York Film Academy.</li>
-                  <li>Experiência em grandes empresas como TV Globo, MTV, IBM, BASF e DELL.</li>
-                  <li>Head de Customer Experience do app My Heineken.</li>
-                  <li>Nos últimos anos, dedica-se ao marketing digital, gestão de redes sociais e produção de conteúdo em vídeo.</li>
-                  <li>Ajuda marcas a fortalecer sua presença digital e aumentar sua percepção de valor.</li>
-                  <li>Na Europa, tem trabalhado com diferentes nichos como imobiliário, terapias, estética, restauração e medicina integrativa.</li>
-                  <li>Colaborou com duas revistas e realizou coberturas de eventos em Lisboa, Paris e na Semana de Design de Milão.</li>
-                </ul>
-              </motion.div>
-          </motion.div>
+      {/* O QUE NOS TORNA ÚNICOS */}
+      <section className="py-20 bg-[#213D7A] text-white">
+        <div className="max-w-5xl mx-auto px-6 text-center">
+          <h2 className="text-3xl md:text-4xl font-heading font-black uppercase mb-12">O que nos torna únicos</h2>
+          <div className="space-y-4">
+            {UNIQUE_ITEMS.map((item, i) => (
+              <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-6 text-left">
+                <h3 className="font-bold text-lg mb-2 text-[#E2BA3D]">{item.title}</h3>
+                <p className="text-sm opacity-80">{item.answer}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* CLIENTS SECTION - Compact version */}
-      <section id="clientes" className="relative z-10 py-10 md:py-16 bg-[#213D7A] w-full overflow-hidden">
-        <div className="max-w-[1400px] mx-auto px-4 md:px-6 relative">
+      {/* QUEM SOMOS SECTION - FUNDO BRANCO */}
+      <section id="quem-somos" className="py-24 bg-white text-[#213D7A] relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div className="space-y-8">
+              <div>
+                <h2 className="text-4xl md:text-6xl font-heading font-black uppercase mb-4">Munik Rangel</h2>
+                <p className="text-lg font-light text-[#961D1D]">Nós somos uma agência de marketing que atende clientes no Brasil e em Portugal.</p>
+              </div>
+              
+              <ul className="space-y-4 list-disc pl-5 marker:text-[#E2BA3D] text-sm md:text-base opacity-90 leading-relaxed font-light">
+                <li>Estratega de marketing brasileira, há 27 anos.</li>
+                <li>Certificada pela New York Film Academy.</li>
+                <li>Experiência em grandes empresas como TV Globo, MTV, IBM, BASF e DELL.</li>
+                <li>Head Customer Experience do app My Heineken.</li>
+                <li>Nos últimos anos, dedica-se ao marketing digital, gestão de redes sociais e produção de conteúdo em vídeo.</li>
+                <li>Ajuda marcas a fortalecer sua presença digital e aumentar sua percepção de valor.</li>
+                <li>Na Europa, tem trabalhado com diferentes nichos como imobiliário, terapias, estética, restauração e medicina integrativa.</li>
+                <li>Colaborou com duas revistas e coberturas de eventos em Lisboa, Paris e na Semana de Design de Milão.</li>
+              </ul>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400" className="rounded-2xl h-64 w-full object-cover shadow-xl border border-gray-100" alt="Munik" />
+              <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=400" className="rounded-2xl h-64 w-full object-cover mt-8 shadow-xl border border-gray-100" alt="Munik Working" />
+              <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=400" className="rounded-2xl h-64 w-full object-cover -mt-8 shadow-xl border border-gray-100" alt="Team" />
+              <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=400" className="rounded-2xl h-64 w-full object-cover shadow-xl border border-gray-100" alt="Success" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CLIENTES SECTION */}
+      <section id="clientes" className="relative z-10 py-20 bg-[#213D7A] w-full overflow-hidden">
+        <div className="max-w-[1400px] mx-auto px-6 relative">
           
-          {/* Header */}
           <motion.div 
-            className="flex flex-col items-center justify-center mb-10 md:mb-12 text-center"
+            className="flex flex-col items-center justify-center mb-12 text-center"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
             variants={fadeInUp}
           >
-             {/* Thin Line above title */}
-             <div className="w-24 h-[1px] bg-white mb-6"></div>
-             
-             <h2 className="text-4xl md:text-5xl font-heading font-bold uppercase text-white tracking-widest">
+             <div className="w-24 h-[1px] bg-white mb-6 opacity-30"></div>
+             <h2 className="text-4xl md:text-5xl font-heading font-black uppercase text-white tracking-widest">
               CLIENTES
             </h2>
           </motion.div>
 
           <div className="flex items-center justify-center relative">
-             {/* Previous Button */}
              <button 
                type="button"
                onClick={handlePrevClient}
                className="hidden md:flex absolute -left-12 lg:-left-24 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors p-2 z-20"
-               aria-label="Previous Clients"
              >
-               <ChevronLeft className="w-8 h-8 md:w-10 md:h-10" />
+               <ChevronLeft className="w-10 h-10" />
              </button>
 
-             {/* Grid Container */}
-             {/* Dynamic min-height based on mobile (300px for 6 items) or desktop (350px for 15) */}
-             <div className="w-full flex items-center justify-center min-h-[350px] transition-[min-height] duration-300">
+             <div className="w-full flex items-center justify-center min-h-[350px]">
                <AnimatePresence mode="wait">
                  <motion.div
                    key={clientPage}
                    initial={{ opacity: 0 }}
                    animate={{ opacity: 1 }}
                    exit={{ opacity: 0 }}
-                   transition={{ duration: 0.4, ease: "easeInOut" }}
-                   // Mobile: 2 cols (3 rows = 6 items). Desktop: 5 cols (3 rows = 15 items)
-                   className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-x-6 gap-y-8 md:gap-x-12 md:gap-y-12 w-full items-start justify-items-center content-start"
+                   transition={{ duration: 0.4 }}
+                   className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-x-8 gap-y-12 w-full items-center justify-items-center"
                  >
                    {visibleClients.map((client, index) => (
                      <motion.div
                        key={client.id}
-                       className="w-full flex items-center justify-center h-24 md:h-32 px-2 md:px-4 will-change-transform"
+                       className="w-full flex flex-col items-center justify-center px-4"
                        initial={{ opacity: 0, y: 15 }}
                        animate={{ opacity: 1, y: 0 }}
-                       transition={{ 
-                         duration: 0.4, 
-                         delay: index * 0.02, 
-                         ease: "easeOut" 
-                       }}
-                       whileHover={{ scale: 1.05, opacity: 1 }} 
+                       transition={{ duration: 0.4, delay: index * 0.02 }}
                      >
-                        {/* Logo Image */}
                          <img 
                            src={client.image} 
                            alt={client.name} 
                            className="w-auto max-h-20 md:max-h-28 object-contain filter brightness-0 invert opacity-70 hover:opacity-100 transition-opacity duration-300"
                            loading="eager"
                          />
+                         <span className="mt-4 text-[10px] font-black uppercase tracking-widest text-white/40">{client.id.startsWith('pt') ? 'Portugal' : 'Brasil'}</span>
                      </motion.div>
                    ))}
                  </motion.div>
                </AnimatePresence>
              </div>
 
-             {/* Next Button */}
              <button 
                type="button"
                onClick={handleNextClient}
                className="hidden md:flex absolute -right-12 lg:-right-24 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors p-2 z-20"
-               aria-label="Next Clients"
              >
-               <ChevronRight className="w-8 h-8 md:w-10 md:h-10" />
+               <ChevronRight className="w-10 h-10" />
              </button>
           </div>
 
-          {/* Mobile Navigation (Visible only on small screens) */}
-          <div className="flex md:hidden justify-center gap-8 mt-12">
-             <button 
-               type="button"
-               onClick={handlePrevClient}
-               className="text-white/50 hover:text-white transition-colors p-2"
-             >
-               <ChevronLeft className="w-8 h-8" />
-             </button>
-             <button 
-               type="button"
-               onClick={handleNextClient}
-               className="text-white/50 hover:text-white transition-colors p-2"
-             >
-               <ChevronRight className="w-8 h-8" />
-             </button>
+          <div className="flex md:hidden justify-center gap-12 mt-12">
+             <button onClick={handlePrevClient} className="text-white/50"><ChevronLeft className="w-10 h-10" /></button>
+             <button onClick={handleNextClient} className="text-white/50"><ChevronRight className="w-10 h-10" /></button>
           </div>
-
         </div>
       </section>
 
-      {/* TICKETS / GARANTA SECTION - MOVED ABOVE UNIQUE */}
-      <section id="tickets" className="relative z-10 py-20 md:py-32 px-4 md:px-6 bg-[#FFFFFF]">
-        <motion.div 
-          className="max-w-7xl mx-auto"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
-          variants={fadeInUp}
-        >
-          <div className="text-center">
-             <h2 className="text-5xl md:text-9xl font-heading font-bold text-[#213D7A]/10">
-               GARANTA
-             </h2>
-             <p className="text-[#213D7A] font-mono uppercase tracking-widest -mt-3 md:-mt-8 relative z-10 text-sm md:text-base mb-10 font-bold">
-               SEU SUCESSO ONLINE
-             </p>
-             
-             <motion.button 
-               className="relative z-10 inline-flex items-center gap-3 px-12 py-5 bg-[#961D1D] text-white hover:bg-[#213D7A] transition-all duration-300 rounded-full font-bold tracking-widest uppercase text-sm shadow-lg group"
-               data-hover="true"
-               onClick={() => window.open('https://wa.me/', '_blank')}
-               variants={buttonHover}
-               initial="rest"
-               whileHover="hover"
-               whileTap="tap"
-             >
-               <Mail className="w-5 h-5 group-hover:scale-110 transition-transform" />
-               Entrar em contacto
-             </motion.button>
-          </div>
-        </motion.div>
-      </section>
-
-      {/* NEW SECTION: O QUE NOS TORNA ÚNICOS - Blue Background + White Card */}
-      <section id="unique" className="relative z-10 py-16 md:py-24 bg-[#213D7A] border-t border-white/10 overflow-hidden">
-        <div className="max-w-[1600px] mx-auto px-4 md:px-6 relative">
-          
-          {/* White Card Wrapper */}
-          <motion.div 
-            className="bg-white rounded-[2rem] px-6 py-8 md:px-12 md:py-12 max-w-5xl mx-auto shadow-xl"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.2 }}
-            variants={fadeInUp}
-          >
-              <div className="max-w-4xl mx-auto text-center">
-                  <h2 className="text-3xl md:text-6xl font-heading font-bold mb-6 md:mb-8 leading-tight uppercase">
-                    <GradientText text="O QUE NOS TORNA ÚNICOS" className="text-3xl md:text-6xl" />
-                  </h2>
-                  
-                  {/* Decorative Line */}
-                  <div className="w-16 h-1.5 bg-[#E2BA3D] mx-auto rounded-full mb-8 md:mb-10 opacity-90"></div>
-
-                  {/* FAQ-style Cards with Accordion */}
-                  <motion.div 
-                    className="flex flex-col gap-3"
-                    variants={staggerContainer}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, amount: 0.2 }}
-                  >
-                    {UNIQUE_ITEMS.map((item, index) => {
-                      const isOpen = activeAccordion === index;
-                      return (
-                       <motion.div 
-                        key={index}
-                        variants={fadeInUp}
-                        onClick={() => setActiveAccordion(isOpen ? null : index)}
-                        className="flex flex-col w-full bg-white border border-[#213D7A]/15 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 group cursor-pointer overflow-hidden relative will-change-transform"
-                        whileHover={{ y: -4, borderColor: "rgba(33, 61, 122, 0.3)" }}
-                        transition={{ duration: 0.3 }}
-                       >
-                          <div className="flex items-center justify-between p-4 md:p-6">
-                             <span className="text-base md:text-lg text-[#213D7A] font-medium text-left leading-relaxed">{item.title}</span>
-                             <motion.div
-                               animate={{ rotate: isOpen ? 180 : 0 }}
-                               transition={{ duration: 0.5, ease: [0.33, 1, 0.68, 1] }}
-                             >
-                                <ChevronDown className="w-5 h-5 text-[#213D7A] shrink-0 ml-4 opacity-50 group-hover:opacity-100 transition-opacity" />
-                             </motion.div>
-                          </div>
-                          
-                          <AnimatePresence>
-                             {isOpen && (
-                               <motion.div
-                                 initial={{ height: 0, opacity: 0 }}
-                                 animate={{ height: "auto", opacity: 1 }}
-                                 exit={{ height: 0, opacity: 0 }}
-                                 transition={{ duration: 0.5, ease: [0.33, 1, 0.68, 1] }}
-                               >
-                                  <div className="px-4 md:px-6 pb-4 md:pb-6 pt-0">
-                                     <div className="w-full h-px bg-[#213D7A]/10 mb-3"></div>
-                                     <p className="text-sm md:text-base text-[#213D7A]/70 leading-relaxed text-left">
-                                       {item.answer}
-                                     </p>
-                                  </div>
-                               </motion.div>
-                             )}
-                          </AnimatePresence>
-                       </motion.div>
-                      );
-                    })}
-                  </motion.div>
+      {/* PORTEFOLIO SECTION */}
+      <section id="portefolio" className="py-24 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <h2 className="text-3xl font-heading font-black uppercase mb-12">O nosso trabalho no Instagram</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="aspect-square bg-gray-200 rounded-xl overflow-hidden relative group cursor-pointer shadow-lg">
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                  <Instagram className="text-white w-8 h-8" />
+                </div>
               </div>
-          </motion.div>
-
+            ))}
+          </div>
+          <button className="mt-12 text-[10px] font-black uppercase tracking-widest border-2 border-[#213D7A] px-10 py-4 rounded-full hover:bg-[#213D7A] hover:text-white transition-all shadow-md">
+            Ver Portefólio Completo
+          </button>
         </div>
       </section>
 
-      <footer className="relative z-10 border-t border-white/20 py-12 md:py-16 bg-[#213D7A] text-white">
-        <motion.div 
-          className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-8"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 1.5 }}
-          viewport={{ once: true }}
-        >
-          <div>
-             <div className="mb-4">
-               <img 
-                 src="https://i.postimg.cc/wvL4w0q5/logo-wee.png" 
-                 alt="WEELOVE" 
-                 className="h-10 md:h-12 w-auto object-contain brightness-0 invert"
-               />
-             </div>
-             <div className="flex gap-2 text-xs font-mono text-white/60">
-               <span>Criado por: @ethoss.x</span>
-             </div>
-          </div>
+      {/* CONTACTO SECTION */}
+      <section id="contacto" className="py-24 bg-white">
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <h2 className="text-4xl md:text-6xl font-heading font-black uppercase mb-4 leading-tight">A sua marca, mais forte no digital.</h2>
+          <p className="text-lg opacity-60 mb-12 max-w-2xl mx-auto font-light">Estratégia, conteúdo e resultados que fazem crescer o seu negócio.</p>
           
-          <div className="flex gap-6 md:gap-8 flex-wrap">
-            <a href="https://www.instagram.com/wee_marketing/" target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-[#E2BA3D] font-bold uppercase text-xs tracking-widest transition-colors cursor-pointer" data-hover="true">
-              Instagram
-            </a>
+          <form className="space-y-6 text-left bg-gray-50 p-8 md:p-12 rounded-[3rem] shadow-sm border border-gray-100">
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest opacity-40">Nome</label>
+                <input type="text" className="w-full bg-white border-b-2 border-gray-200 py-3 px-4 focus:outline-none focus:border-[#213D7A] rounded-lg" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest opacity-40">E-mail</label>
+                <input type="email" className="w-full bg-white border-b-2 border-gray-200 py-3 px-4 focus:outline-none focus:border-[#213D7A] rounded-lg" />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-widest opacity-40">Mensagem</label>
+              <textarea rows={4} className="w-full bg-white border-b-2 border-gray-200 py-3 px-4 focus:outline-none focus:border-[#213D7A] rounded-lg" />
+            </div>
+            <button className="w-full bg-[#213D7A] text-white py-5 rounded-full font-bold uppercase tracking-widest text-sm hover:bg-[#961D1D] transition-colors shadow-xl">Enviar Mensagem</button>
+          </form>
+        </div>
+      </section>
+
+      <footer className="py-12 border-t border-gray-100 bg-white">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
+          <img 
+            src="https://i.postimg.cc/wvL4w0q5/logo-wee.png" 
+            alt="WEE MARKETING" 
+            className="h-10 md:h-12 w-auto object-contain"
+          />
+          <div className="flex gap-8 text-[10px] font-bold uppercase tracking-widest opacity-40">
+             <a href="https://www.instagram.com/wee_marketing/" target="_blank" className="hover:opacity-100 transition-opacity">Instagram</a>
+             <a href="#" className="hover:opacity-100 transition-opacity">LinkedIn</a>
+             <a href="#" className="hover:opacity-100 transition-opacity">YouTube</a>
           </div>
-        </motion.div>
+          <p className="text-[10px] opacity-40 font-mono tracking-tighter">© 2025 WEE MARKETING. Criado por @ethoss.x</p>
+        </div>
       </footer>
 
       {/* SERVICE DETAILS MODAL */}
       <AnimatePresence>
         {selectedService && (
           <React.Fragment>
-             {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelectedService(null)}
-              className="fixed inset-0 bg-black/60 z-[60] backdrop-blur-sm"
+              className="fixed inset-0 bg-black/60 z-[70] backdrop-blur-sm"
             />
-            
-            {/* Modal Container */}
-            <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 pointer-events-none">
+            <div className="fixed inset-0 z-[80] flex items-center justify-center p-4">
               <motion.div
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                className="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl relative pointer-events-auto flex flex-col"
+                className="bg-white rounded-[3rem] w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl p-8 md:p-12"
               >
-                {/* Modal Header */}
-                <div className="sticky top-0 right-0 p-6 flex justify-end bg-white/80 backdrop-blur-sm z-10">
-                   <button 
-                     onClick={() => setSelectedService(null)}
-                     className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-                     aria-label="Close"
-                   >
-                     <X className="w-6 h-6 text-[#213D7A]" />
-                   </button>
+                <div className="flex justify-between items-start mb-8">
+                  <div className="text-[#E2BA3D]">{selectedService.icon}</div>
+                  <button onClick={() => setSelectedService(null)} className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"><X /></button>
                 </div>
-
-                {/* Modal Content */}
-                <div className="px-8 pb-10 pt-2">
-                   <h3 className="text-3xl md:text-4xl font-heading font-bold text-[#213D7A] mb-6 leading-tight">
-                     {selectedService.title}
-                   </h3>
-                   
-                   <div className="w-20 h-1 bg-[#E2BA3D] mb-8" />
-                   
-                   <p className="text-[#213D7A]/80 text-lg leading-relaxed mb-10 whitespace-pre-line">
-                     {selectedService.fullDescription}
-                   </p>
-
-                   <motion.button 
-                     onClick={() => {
-                        window.open('https://wa.me/', '_blank');
-                        setSelectedService(null);
-                     }}
-                     className="w-full md:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 bg-[#213D7A] text-white hover:bg-[#961D1D] transition-colors rounded-full font-bold tracking-widest uppercase text-sm shadow-lg group"
-                     variants={buttonHover}
-                     initial="rest"
-                     whileHover="hover"
-                     whileTap="tap"
-                   >
-                     {selectedService.ctaText}
-                     <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                   </motion.button>
-                </div>
+                <h3 className="text-3xl font-heading font-bold mb-6">{selectedService.title}</h3>
+                <p className="text-lg opacity-70 leading-relaxed mb-10 whitespace-pre-line">{selectedService.fullDescription}</p>
+                <button 
+                  onClick={() => window.open('https://wa.me/', '_blank')}
+                  className="w-full bg-[#213D7A] text-white py-5 rounded-full font-bold uppercase tracking-widest text-sm hover:bg-[#961D1D] transition-colors"
+                >
+                  {selectedService.cta}
+                </button>
               </motion.div>
             </div>
           </React.Fragment>
