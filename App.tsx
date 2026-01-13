@@ -1,6 +1,6 @@
 
-import React, { useState, useRef } from 'react';
-import { motion, AnimatePresence, Variants, useScroll, useSpring } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence, Variants, useScroll, useSpring, useTransform } from 'framer-motion';
 import { Menu, X, Clapperboard, ThumbsUp, Camera, Lightbulb, Instagram, Target, Heart, ArrowUpRight, PlayCircle, ChevronDown } from 'lucide-react';
 import FluidBackground from './components/FluidBackground';
 import CustomCursor from './components/CustomCursor';
@@ -100,8 +100,13 @@ const UNIQUE_VALUES = [
 const App: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<typeof SERVICES[0] | null>(null);
-  const { scrollYProgress } = useScroll();
+  const { scrollY, scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
+
+  // Menu background transition based on scroll
+  const navBg = useTransform(scrollY, [0, 100], ["rgba(255, 255, 255, 0)", "rgba(255, 255, 255, 0.95)"]);
+  const navBorder = useTransform(scrollY, [0, 100], ["rgba(255, 255, 255, 0)", "rgba(33, 61, 122, 0.05)"]);
+  const navShadow = useTransform(scrollY, [0, 100], ["none", "0 10px 15px -3px rgba(0, 0, 0, 0.1)"]);
 
   // Form State
   const [formName, setFormName] = useState("");
@@ -164,11 +169,16 @@ const App: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* NAVIGATION */}
+      {/* NAVIGATION - TRANSPARENT OVER VIDEO */}
       <motion.nav 
-        initial={{ y: -50, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className="fixed top-8 md:top-10 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-4 bg-white/80 backdrop-blur-xl border-b border-[#213D7A]/5"
+        style={{ 
+          backgroundColor: navBg,
+          borderBottomColor: navBorder,
+          boxShadow: navShadow
+        }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="fixed top-8 md:top-10 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-4 backdrop-blur-sm border-b transition-colors duration-300"
       >
         <div className="cursor-pointer" onClick={() => scrollToSection('inicio')}>
            <img src="https://i.postimg.cc/wvL4w0q5/logo-wee.png" alt="WEE" className="h-6 md:h-8 w-auto hover:opacity-80 transition-opacity" />
@@ -200,8 +210,8 @@ const App: React.FC = () => {
         <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden p-2"><Menu className="w-5 h-5" /></button>
       </motion.nav>
 
-      {/* HERO SECTION WITH VIDEO BACKGROUND */}
-      <header id="inicio" className="relative h-[90vh] md:h-screen w-full flex items-center justify-center overflow-hidden bg-black">
+      {/* HERO SECTION - PERFECTLY CENTERED */}
+      <header id="inicio" className="relative h-screen w-full flex items-center justify-center overflow-hidden bg-black">
         {/* VIDEO BACKGROUND */}
         <div className="absolute inset-0 z-0 pointer-events-none">
           <iframe 
@@ -214,22 +224,22 @@ const App: React.FC = () => {
         </div>
 
         {/* OVERLAY */}
-        <div className="absolute inset-0 z-[1] bg-black/50 backdrop-blur-[1px]" />
+        <div className="absolute inset-0 z-[1] bg-black/60 backdrop-blur-[0.5px]" />
 
-        {/* CONTENT */}
-        <div className="relative z-10 w-full max-w-[1440px] mx-auto flex flex-col items-center justify-center text-center px-6">
+        {/* CONTENT - TRUE CENTER */}
+        <div className="relative z-10 w-full flex items-center justify-center px-8 md:px-12 h-full">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, ease: EASE_PREMIUM }}
-            className="flex flex-col items-center"
+            className="flex flex-col items-center justify-center w-full max-w-[850px] text-center"
           >
-            <h1 className="text-[2rem] sm:text-[3rem] md:text-5xl lg:text-[5.5rem] xl:text-[6rem] font-heading font-black leading-[1.05] mb-8 tracking-tighter text-white mx-auto">
-              Transformamos presença digital <br className="hidden lg:block" /> 
+            <h1 className="text-[1.8rem] sm:text-[2.4rem] md:text-5xl lg:text-6xl xl:text-7xl font-heading font-bold leading-[1.15] md:leading-[1.1] mb-8 md:mb-10 tracking-tight text-white capitalize text-balance">
+              Transformamos presença digital <br className="hidden md:block" /> 
               <span className="text-[#E2BA3D]">em resultados reais.</span>
             </h1>
 
-            <p className="text-sm sm:text-base md:text-xl lg:text-2xl font-light mb-12 text-white/90 max-w-[32ch] sm:max-w-[50ch] md:max-w-[70ch] leading-relaxed mx-auto px-4">
+            <p className="text-[14px] sm:text-[16px] md:text-lg lg:text-[19px] font-light mb-12 md:mb-14 text-white/80 max-w-[32ch] sm:max-w-[42ch] md:max-w-[50ch] lg:max-w-[60ch] leading-relaxed mx-auto">
               Estratégia, Formação, Conteúdo e Criatividade para marcas que querem crescer no digital.
             </p>
 
@@ -238,7 +248,7 @@ const App: React.FC = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => openWhatsApp()}
-                className="bg-[#E2BA3D] text-[#213D7A] px-16 py-6 rounded-full font-black uppercase tracking-widest text-xs shadow-2xl shadow-[#E2BA3D]/20 transition-all duration-500 w-full sm:w-auto min-w-[280px]"
+                className="bg-[#E2BA3D] text-[#213D7A] px-10 md:px-14 py-4 md:py-5 rounded-full font-black uppercase tracking-widest text-[10px] md:text-xs shadow-2xl transition-all duration-500 w-full sm:w-auto min-w-[220px]"
               >
                 Fale connosco
               </motion.button>
@@ -254,6 +264,27 @@ const App: React.FC = () => {
           <ChevronDown className="w-8 h-8" />
         </motion.div>
       </header>
+
+      {/* MOBILE MENU OVERLAY */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, x: '100%' }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: '100%' }}
+            className="fixed inset-0 z-[200] bg-white flex flex-col items-center justify-center p-8 text-center"
+          >
+            <button onClick={() => setMobileMenuOpen(false)} className="absolute top-12 right-8 p-4"><X className="w-8 h-8" /></button>
+            <div className="flex flex-col gap-8 text-2xl font-black uppercase tracking-widest">
+              <button onClick={() => scrollToSection('inicio')}>Início</button>
+              <button onClick={() => scrollToSection('servicos')}>Serviços</button>
+              <button onClick={() => scrollToSection('a-wee')}>A Wee</button>
+              <button onClick={() => scrollToSection('clientes')}>Clientes</button>
+              <button onClick={() => scrollToSection('contacto')}>Contacto</button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* SERVICES SECTION */}
       <section id="servicos-elite" className="py-24 md:py-40 bg-white">
@@ -351,9 +382,9 @@ const App: React.FC = () => {
             </div>
             <div className="space-y-10">
               <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-[#961D1D]">The Visionary</h2>
-              <h3 className="text-3xl md:text-6xl font-heading font-black">MUNIK RANGEL.</h3>
+              <h3 className="text-3xl md:text-6xl font-heading font-black text-balance">MUNIK RANGEL.</h3>
               <p className="text-base md:text-lg text-[#213D7A]/60 leading-relaxed font-light">
-                Ex-Globo, IBM e BASF. Head de CX e estrategista digital certificada pela New York Film Academy. Munik combina a sofisticação da televisão com a agilidade do digital.
+                Ex-Globo, IBM e BASF. Head de CX e estrategista digital certificada pela New York Film Academy. Munik combina a sofisticação da televisão with a agilidade do digital.
               </p>
               <div className="grid grid-cols-2 gap-8 border-t border-gray-100 pt-10">
                 <div>
@@ -439,7 +470,7 @@ const App: React.FC = () => {
       <section id="contacto" className="py-24 md:py-40 bg-white">
         <div className="max-w-4xl mx-auto px-6">
           <div className="text-center mb-20">
-            <h3 className="text-4xl md:text-7xl font-heading font-black mb-6 uppercase">VAMOS ESCALAR?</h3>
+            <h3 className="text-4xl md:text-7xl font-heading font-black mb-6 uppercase text-balance">VAMOS ESCALAR?</h3>
             <p className="text-[#213D7A]/40 font-bold uppercase text-[10px] tracking-[0.3em]">Preencha para receber uma proposta exclusiva.</p>
           </div>
           
@@ -523,7 +554,7 @@ const App: React.FC = () => {
             <p className="text-[9px] font-black text-[#213D7A] uppercase tracking-[0.2em]">
               © 2025 WEE MARKETING CRIADO POR: ETHOSS.X
             </p>
-            <p className="text-[7px] font-bold opacity-20 uppercase tracking-widest">Elevando o Padrão de Conteúdo</p>
+            <p className="text-[7px] font-bold opacity-20 uppercase tracking-widest text-balance">Elevando o Padrão de Conteúdo</p>
           </div>
         </div>
       </footer>
