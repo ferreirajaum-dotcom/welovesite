@@ -103,7 +103,6 @@ const App: React.FC = () => {
   const { scrollY, scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
 
-  // Dynamic values for header based on scroll
   const navBackground = useTransform(scrollY, [0, 100], ["rgba(255, 255, 255, 0)", "rgba(255, 255, 255, 1)"]);
   const navShadow = useTransform(scrollY, [0, 100], ["none", "0 4px 6px -1px rgb(0 0 0 / 0.1)"]);
   const navTextColor = useTransform(scrollY, [0, 100], ["#FFFFFF", "#213D7A"]);
@@ -144,7 +143,6 @@ const App: React.FC = () => {
 
       <motion.div className="fixed top-0 left-0 right-0 h-1 bg-[#E2BA3D] origin-left z-[110]" style={{ scaleX }} />
 
-      {/* ANNOUNCEMENT TICKER */}
       <div className="fixed top-0 left-0 right-0 z-[105] bg-[#961D1D] text-white h-8 md:h-10 overflow-hidden border-b border-[#E2BA3D]/20">
         <motion.div 
           className="whitespace-nowrap flex items-center h-full gap-8 md:gap-16"
@@ -169,7 +167,6 @@ const App: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* NAVIGATION */}
       <motion.nav 
         style={{ 
           backgroundColor: navBackground,
@@ -210,32 +207,36 @@ const App: React.FC = () => {
         </motion.button>
       </motion.nav>
 
-      {/* HERO SECTION - REFINED CENTRALIZATION */}
-      <header id="inicio" className="relative min-h-[100svh] md:min-h-[100vh] w-full flex items-center justify-center overflow-hidden bg-black">
-        {/* VIDEO BACKGROUND */}
-        <div className="absolute inset-0 z-0 pointer-events-none">
+      {/* HERO SECTION - 100SVH FIXED ON MOBILE */}
+      <header id="inicio" className="relative h-[100svh] min-h-[100svh] md:min-h-[100vh] w-full flex items-center justify-center overflow-hidden bg-black">
+        {/* VIDEO BACKGROUND - FULL COVERAGE */}
+        <div className="absolute inset-0 z-0 w-full h-full pointer-events-none">
           <div className="absolute inset-0 bg-cover bg-center opacity-40 bg-[url('https://i.postimg.cc/wvL4w0q5/logo-wee.png')]" />
-          <iframe 
-            src="https://player.vimeo.com/video/1153987727?background=1&autoplay=1&loop=1&muted=1&playsinline=1&title=0&byline=0&portrait=0&badge=0" 
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[115%] h-[115%] md:w-[105%] md:h-[105%] object-cover"
-            frameBorder="0" 
-            allow="autoplay; fullscreen" 
-            title="WEE Background Video"
-            aria-hidden="true"
-          />
+          
+          {/* Iframe container sized for cover effect on both desktop and mobile aspect ratios */}
+          <div className="absolute inset-0 w-full h-full overflow-hidden">
+            <iframe 
+              src="https://player.vimeo.com/video/1153987727?background=1&autoplay=1&loop=1&muted=1&playsinline=1&title=0&byline=0&portrait=0&badge=0" 
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[177.77777778vh] h-[56.25vw] min-w-full min-h-full"
+              frameBorder="0" 
+              allow="autoplay; fullscreen" 
+              title="WEE Background Video"
+              aria-hidden="true"
+              style={{ objectFit: 'cover' }}
+            />
+          </div>
         </div>
 
         <div className="absolute inset-0 z-[1] bg-black/50 backdrop-blur-[0.5px]" />
 
-        {/* CONTENT - TRUE CENTER */}
-        <div className="relative z-10 w-full h-full flex items-center justify-center px-6 sm:px-8">
+        {/* CONTENT - TRUE CENTER WITHIN SVH */}
+        <div className="relative z-10 w-full h-full flex flex-col items-center justify-center px-6 sm:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, ease: EASE_PREMIUM }}
             className="flex flex-col items-center text-center w-full"
           >
-            {/* HEADLINE: TRAVED SIZES */}
             <h1 className="font-heading font-bold text-white capitalize text-balance
               text-[38px] leading-[1.12] max-w-[92vw] 
               md:text-[52px] md:leading-[1.08] md:max-w-[760px]
@@ -244,7 +245,6 @@ const App: React.FC = () => {
               <span className="text-[#E2BA3D]">em resultados reais.</span>
             </h1>
 
-            {/* SUBTITLE: TRAVED SIZES */}
             <p className="font-light text-white/80 opacity-90 mx-auto mt-6 md:mt-8
               text-[14px] leading-[1.55] max-w-[86vw]
               md:text-[16px] md:leading-[1.5] md:max-w-[640px]
@@ -252,7 +252,6 @@ const App: React.FC = () => {
               Estratégia, Formação, Conteúdo e Criatividade para marcas que querem crescer no digital.
             </p>
 
-            {/* CTA BUTTON */}
             <div className="mt-[24px] md:mt-[32px]">
               <motion.button 
                 whileHover={{ scale: 1.05 }}
@@ -269,13 +268,12 @@ const App: React.FC = () => {
         <motion.div 
           animate={{ y: [0, 8, 0] }}
           transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 opacity-60 pointer-events-none z-10 text-white"
+          className="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 opacity-60 pointer-events-none z-10 text-white"
         >
-          <ChevronDown className="w-10 h-10" />
+          <ChevronDown className="w-8 h-8 md:w-10 md:h-10" />
         </motion.div>
       </header>
 
-      {/* MOBILE MENU OVERLAY */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
