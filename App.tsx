@@ -103,9 +103,11 @@ const App: React.FC = () => {
   const { scrollY, scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
 
-  const navBg = useTransform(scrollY, [0, 100], ["rgba(255, 255, 255, 0)", "rgba(255, 255, 255, 0.95)"]);
-  const navBorder = useTransform(scrollY, [0, 100], ["rgba(255, 255, 255, 0)", "rgba(33, 61, 122, 0.05)"]);
-  const navShadow = useTransform(scrollY, [0, 100], ["none", "0 10px 15px -3px rgba(0, 0, 0, 0.1)"]);
+  // Dynamic values for header based on scroll
+  const navBackground = useTransform(scrollY, [0, 100], ["rgba(255, 255, 255, 0)", "rgba(255, 255, 255, 1)"]);
+  const navShadow = useTransform(scrollY, [0, 100], ["none", "0 4px 6px -1px rgb(0 0 0 / 0.1)"]);
+  const navTextColor = useTransform(scrollY, [0, 100], ["#FFFFFF", "#213D7A"]);
+  const navBorder = useTransform(scrollY, [0, 100], ["rgba(255, 255, 255, 0)", "rgba(0, 0, 0, 0.05)"]);
 
   const [formName, setFormName] = useState("");
   const [formEmail, setFormEmail] = useState("");
@@ -124,7 +126,7 @@ const App: React.FC = () => {
     const targetId = sectionMap[id] || id;
     const el = document.getElementById(targetId);
     if (el) {
-      const offset = id === 'inicio' ? 0 : 120;
+      const offset = id === 'inicio' ? 0 : 100;
       window.scrollTo({ top: el.offsetTop - offset, behavior: 'smooth' });
     }
   };
@@ -140,10 +142,10 @@ const App: React.FC = () => {
       <CustomCursor />
       <FluidBackground />
 
-      <motion.div className="fixed top-0 left-0 right-0 h-1 bg-[#E2BA3D] origin-left z-[100]" style={{ scaleX }} />
+      <motion.div className="fixed top-0 left-0 right-0 h-1 bg-[#E2BA3D] origin-left z-[110]" style={{ scaleX }} />
 
       {/* ANNOUNCEMENT TICKER */}
-      <div className="fixed top-0 left-0 right-0 z-[60] bg-[#961D1D] text-white h-8 md:h-10 overflow-hidden border-b border-[#E2BA3D]/20">
+      <div className="fixed top-0 left-0 right-0 z-[105] bg-[#961D1D] text-white h-8 md:h-10 overflow-hidden border-b border-[#E2BA3D]/20">
         <motion.div 
           className="whitespace-nowrap flex items-center h-full gap-8 md:gap-16"
           animate={{ x: [0, -1500] }}
@@ -167,76 +169,79 @@ const App: React.FC = () => {
         </motion.div>
       </div>
 
+      {/* NAVIGATION - FULLY TRANSPARENT OVER HERO */}
       <motion.nav 
         style={{ 
-          backgroundColor: navBg,
-          borderBottomColor: navBorder,
-          boxShadow: navShadow
+          backgroundColor: navBackground,
+          boxShadow: navShadow,
+          borderBottomColor: navBorder
         }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="fixed top-8 md:top-10 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-4 backdrop-blur-sm border-b transition-colors duration-300"
+        className="fixed top-8 md:top-10 left-0 right-0 z-100 flex items-center justify-between px-6 md:px-12 py-5 border-b transition-all duration-300"
       >
         <div className="cursor-pointer" onClick={() => scrollToSection('inicio')}>
-           <img src="https://i.postimg.cc/wvL4w0q5/logo-wee.png" alt="WEE" className="h-6 md:h-8 w-auto hover:opacity-80 transition-opacity" />
+           {/* LOGO - Filters applied via color sync with text when scrolling */}
+           <motion.img 
+            style={{ filter: useTransform(scrollY, [0, 100], ["brightness(0) invert(1)", "none"]) }}
+            src="https://i.postimg.cc/wvL4w0q5/logo-wee.png" 
+            alt="WEE" 
+            className="h-6 md:h-8 w-auto hover:opacity-80 transition-opacity" 
+           />
         </div>
         
         <div className="hidden lg:flex gap-10 text-[10px] font-black tracking-[0.25em] uppercase">
-          <button onClick={() => scrollToSection('inicio')} className="hover:text-[#961D1D] transition-all relative group py-2">
-            Início
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#961D1D] transition-all duration-500 group-hover:w-full" />
-          </button>
-          <button onClick={() => scrollToSection('servicos')} className="hover:text-[#961D1D] transition-all relative group py-2">
-            Serviços
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#961D1D] transition-all duration-500 group-hover:w-full" />
-          </button>
-          <button onClick={() => scrollToSection('a-wee')} className="hover:text-[#961D1D] transition-all relative group py-2">
-            A Wee
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#961D1D] transition-all duration-500 group-hover:w-full" />
-          </button>
-          <button onClick={() => scrollToSection('clientes')} className="hover:text-[#961D1D] transition-all relative group py-2">
-            Clientes
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#961D1D] transition-all duration-500 group-hover:w-full" />
-          </button>
-          <button onClick={() => scrollToSection('contacto')} className="hover:text-[#961D1D] transition-all relative group py-2">
-            Contacto
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#961D1D] transition-all duration-500 group-hover:w-full" />
-          </button>
+          {['Início', 'Serviços', 'A Wee', 'Clientes', 'Contacto'].map((item) => (
+            <motion.button 
+              key={item}
+              style={{ color: navTextColor }}
+              onClick={() => scrollToSection(item.toLowerCase().replace(' ', '-'))} 
+              className="hover:text-[#E2BA3D] transition-all relative group py-2"
+            >
+              {item}
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#E2BA3D] transition-all duration-500 group-hover:w-full" />
+            </motion.button>
+          ))}
         </div>
 
-        <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden p-2"><Menu className="w-5 h-5" /></button>
+        <motion.button 
+          style={{ color: navTextColor }}
+          onClick={() => setMobileMenuOpen(true)} 
+          className="lg:hidden p-2"
+        >
+          <Menu className="w-6 h-6" />
+        </motion.button>
       </motion.nav>
 
-      {/* HERO SECTION - REFINED PROPORTIONS */}
-      <header id="inicio" className="relative min-h-[85vh] md:min-h-[90vh] lg:h-screen w-full flex items-center justify-center overflow-hidden bg-black">
-        {/* VIDEO BACKGROUND */}
+      {/* HERO SECTION - 100SVH AND NO TOP PADDING GAP */}
+      <header id="inicio" className="relative min-h-[100svh] md:min-h-[100vh] w-full flex items-center justify-center overflow-hidden bg-black">
+        {/* VIDEO BACKGROUND - OPTIMIZED FOR FULL IMMERSION */}
         <div className="absolute inset-0 z-0 pointer-events-none">
+          <div className="absolute inset-0 bg-cover bg-center opacity-40 bg-[url('https://i.postimg.cc/wvL4w0q5/logo-wee.png')]" />
+          
           <iframe 
-            src="https://player.vimeo.com/video/1153987727?background=1&autoplay=1&loop=1&muted=1&title=0&byline=0&portrait=0&badge=0" 
+            src="https://player.vimeo.com/video/1153987727?background=1&autoplay=1&loop=1&muted=1&playsinline=1&title=0&byline=0&portrait=0&badge=0" 
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[115%] h-[115%] md:w-[105%] md:h-[105%] object-cover scale-[1.3] md:scale-[1.1]"
             frameBorder="0" 
             allow="autoplay; fullscreen" 
             title="WEE Background Video"
+            aria-hidden="true"
           />
         </div>
 
-        {/* OVERLAY */}
-        <div className="absolute inset-0 z-[1] bg-black/60 backdrop-blur-[0.5px]" />
+        <div className="absolute inset-0 z-[1] bg-black/50 backdrop-blur-[0.5px]" />
 
-        {/* CONTENT - ORGANIZED & ELEGANT */}
-        <div className="relative z-10 w-full flex items-center justify-center px-8 md:px-12 h-full py-20">
+        <div className="relative z-10 w-full flex items-center justify-center px-8 md:px-12 h-full">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, ease: EASE_PREMIUM }}
             className="flex flex-col items-center justify-center w-full max-w-[820px] text-center"
           >
-            <h1 className="text-[1.6rem] sm:text-[2.2rem] md:text-4xl lg:text-5xl xl:text-6xl font-heading font-bold leading-[1.2] md:leading-[1.15] mb-8 md:mb-12 tracking-tight text-white capitalize text-balance">
+            <h1 className="text-[1.8rem] sm:text-[2.2rem] md:text-5xl lg:text-6xl xl:text-7xl font-heading font-bold leading-[1.2] md:leading-[1.15] mb-8 md:mb-12 tracking-tight text-white capitalize text-balance">
               Transformamos presença digital <br className="hidden md:block" /> 
               <span className="text-[#E2BA3D]">em resultados reais.</span>
             </h1>
 
-            <p className="text-[13px] sm:text-[15px] md:text-base lg:text-lg font-light mb-12 md:mb-16 text-white/80 max-w-[32ch] sm:max-w-[42ch] md:max-w-[50ch] lg:max-w-[60ch] leading-relaxed mx-auto opacity-90">
+            <p className="text-[14px] sm:text-[16px] md:text-lg lg:text-xl font-light mb-12 md:mb-16 text-white/80 max-w-[32ch] sm:max-w-[42ch] md:max-w-[50ch] lg:max-w-[60ch] leading-relaxed mx-auto opacity-90">
               Estratégia, Formação, Conteúdo e Criatividade para marcas que querem crescer no digital.
             </p>
 
@@ -245,7 +250,7 @@ const App: React.FC = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => openWhatsApp()}
-                className="bg-[#E2BA3D] text-[#213D7A] px-10 md:px-14 py-4 md:py-5 rounded-full font-black uppercase tracking-widest text-[9px] md:text-xs shadow-2xl transition-all duration-500 w-full sm:w-auto min-w-[210px]"
+                className="bg-[#E2BA3D] text-[#213D7A] px-10 md:px-14 py-4 md:py-5 rounded-full font-black uppercase tracking-widest text-[10px] md:text-xs shadow-2xl transition-all duration-500 w-full sm:w-auto min-w-[210px]"
               >
                 Fale connosco
               </motion.button>
@@ -256,9 +261,9 @@ const App: React.FC = () => {
         <motion.div 
           animate={{ y: [0, 8, 0] }}
           transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 opacity-60 pointer-events-none z-10 text-white"
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 opacity-60 pointer-events-none z-10 text-white"
         >
-          <ChevronDown className="w-8 h-8" />
+          <ChevronDown className="w-10 h-10" />
         </motion.div>
       </header>
 
@@ -271,8 +276,8 @@ const App: React.FC = () => {
             exit={{ opacity: 0, x: '100%' }}
             className="fixed inset-0 z-[200] bg-white flex flex-col items-center justify-center p-8 text-center"
           >
-            <button onClick={() => setMobileMenuOpen(false)} className="absolute top-12 right-8 p-4"><X className="w-8 h-8" /></button>
-            <div className="flex flex-col gap-8 text-2xl font-black uppercase tracking-widest">
+            <button onClick={() => setMobileMenuOpen(false)} className="absolute top-12 right-8 p-4 text-[#213D7A]"><X className="w-8 h-8" /></button>
+            <div className="flex flex-col gap-8 text-2xl font-black uppercase tracking-widest text-[#213D7A]">
               <button onClick={() => scrollToSection('inicio')}>Início</button>
               <button onClick={() => scrollToSection('servicos')}>Serviços</button>
               <button onClick={() => scrollToSection('a-wee')}>A Wee</button>
