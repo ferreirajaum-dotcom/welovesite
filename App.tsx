@@ -112,13 +112,24 @@ const App: React.FC = () => {
 
   const scrollToSection = (id: string) => {
     setMobileMenuOpen(false);
-    const el = document.getElementById(id);
-    if (el) window.scrollTo({ top: el.offsetTop - 80, behavior: 'smooth' });
+    // Mapeamento de links amigáveis para IDs de seção
+    const sectionMap: Record<string, string> = {
+      'inicio': 'inicio',
+      'servicos': 'servicos-elite',
+      'a-wee': 'quem-somos',
+      'clientes': 'clientes',
+      'contacto': 'contacto'
+    };
+
+    const targetId = sectionMap[id] || id;
+    const el = document.getElementById(targetId);
+    if (el) window.scrollTo({ top: el.offsetTop - 120, behavior: 'smooth' });
   };
 
   const handleShowreelClick = () => {
     setVideoAutoplay(1);
-    scrollToSection('video-institucional');
+    const el = document.getElementById('video-institucional');
+    if (el) window.scrollTo({ top: el.offsetTop - 120, behavior: 'smooth' });
   };
 
   const handleFormSubmit = (e: React.FormEvent) => {
@@ -134,23 +145,23 @@ const App: React.FC = () => {
 
       <motion.div className="fixed top-0 left-0 right-0 h-1 bg-[#E2BA3D] origin-left z-[100]" style={{ scaleX }} />
 
-      {/* ANNOUNCEMENT TICKER - REDUCED HEIGHT */}
-      <div className="fixed top-0 left-0 right-0 z-[60] bg-[#961D1D] text-white h-10 md:h-12 overflow-hidden border-b border-[#E2BA3D]/20">
+      {/* ANNOUNCEMENT TICKER - EVEN MORE COMPACT */}
+      <div className="fixed top-0 left-0 right-0 z-[60] bg-[#961D1D] text-white h-8 md:h-10 overflow-hidden border-b border-[#E2BA3D]/20">
         <motion.div 
           className="whitespace-nowrap flex items-center h-full gap-8 md:gap-16"
           animate={{ x: [0, -1500] }}
           transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
         >
           {[...Array(10)].map((_, i) => (
-            <div key={i} className="flex items-center gap-4 md:gap-8 flex-shrink-0">
-              <span className="text-[9px] md:text-[12px] font-black tracking-wider uppercase leading-none">
+            <div key={i} className="flex items-center gap-3 md:gap-6 flex-shrink-0">
+              <span className="text-[8px] md:text-[11px] font-black tracking-wider uppercase leading-none">
                 EM BREVE: 4º WORKSHOP DE VÍDEOS E EDIÇÃO COM TELEMÓVEL!
               </span>
               <a 
                 href="https://forms.gle/F4SHYr5nRvPWCscQ9" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="bg-[#E2BA3D] text-[#213D7A] px-3 md:px-5 py-1 md:py-1.5 rounded-full text-[8px] md:text-[10px] font-black uppercase tracking-widest hover:bg-white transition-all duration-300 shadow-lg flex-shrink-0"
+                className="bg-[#E2BA3D] text-[#213D7A] px-2.5 md:px-4 py-0.5 md:py-1 rounded-full text-[7px] md:text-[9px] font-black uppercase tracking-widest hover:bg-white transition-all duration-300 shadow-lg flex-shrink-0"
               >
                 PRÉ-INSCRIÇÃO AQUI
               </a>
@@ -162,26 +173,36 @@ const App: React.FC = () => {
       <motion.nav 
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="fixed top-10 md:top-12 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-5 bg-white/80 backdrop-blur-xl border-b border-[#213D7A]/5"
+        className="fixed top-8 md:top-10 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-4 bg-white/80 backdrop-blur-xl border-b border-[#213D7A]/5"
       >
         <div className="cursor-pointer" onClick={() => scrollToSection('inicio')}>
-           <img src="https://i.postimg.cc/wvL4w0q5/logo-wee.png" alt="WEE" className="h-7 md:h-9 w-auto hover:opacity-80 transition-opacity" />
+           <img src="https://i.postimg.cc/wvL4w0q5/logo-wee.png" alt="WEE" className="h-6 md:h-8 w-auto hover:opacity-80 transition-opacity" />
         </div>
         
         <div className="hidden lg:flex gap-10 text-[10px] font-black tracking-[0.25em] uppercase">
-          {['Início', 'Serviços', 'A Wee', 'Clientes', 'Contacto'].map((label) => (
-            <button 
-              key={label} 
-              onClick={() => scrollToSection(label === 'A Wee' ? 'quem-somos' : label.toLowerCase().replace('ç', 'c'))}
-              className="hover:text-[#961D1D] transition-all relative group py-2"
-            >
-              {label}
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#961D1D] transition-all duration-500 group-hover:w-full" />
-            </button>
-          ))}
+          <button onClick={() => scrollToSection('inicio')} className="hover:text-[#961D1D] transition-all relative group py-2">
+            Início
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#961D1D] transition-all duration-500 group-hover:w-full" />
+          </button>
+          <button onClick={() => scrollToSection('servicos')} className="hover:text-[#961D1D] transition-all relative group py-2">
+            Serviços
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#961D1D] transition-all duration-500 group-hover:w-full" />
+          </button>
+          <button onClick={() => scrollToSection('a-wee')} className="hover:text-[#961D1D] transition-all relative group py-2">
+            A Wee
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#961D1D] transition-all duration-500 group-hover:w-full" />
+          </button>
+          <button onClick={() => scrollToSection('clientes')} className="hover:text-[#961D1D] transition-all relative group py-2">
+            Clientes
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#961D1D] transition-all duration-500 group-hover:w-full" />
+          </button>
+          <button onClick={() => scrollToSection('contacto')} className="hover:text-[#961D1D] transition-all relative group py-2">
+            Contacto
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#961D1D] transition-all duration-500 group-hover:w-full" />
+          </button>
         </div>
 
-        <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden p-2"><Menu className="w-6 h-6" /></button>
+        <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden p-2"><Menu className="w-5 h-5" /></button>
       </motion.nav>
 
       <AnimatePresence>
@@ -193,21 +214,17 @@ const App: React.FC = () => {
             className="fixed inset-0 z-[100] bg-[#213D7A] flex flex-col items-center justify-center gap-10"
           >
             <button onClick={() => setMobileMenuOpen(false)} className="absolute top-10 right-10 text-white"><X className="w-8 h-8" /></button>
-            {['Início', 'Serviços', 'A Wee', 'Clientes', 'Contacto'].map((label) => (
-              <button
-                key={label}
-                onClick={() => scrollToSection(label === 'A Wee' ? 'quem-somos' : label.toLowerCase().replace('ç', 'c'))}
-                className="text-4xl font-heading font-black text-white hover:text-[#E2BA3D] transition-colors"
-              >
-                {label}
-              </button>
-            ))}
+            <button onClick={() => scrollToSection('inicio')} className="text-4xl font-heading font-black text-white hover:text-[#E2BA3D] transition-colors">Início</button>
+            <button onClick={() => scrollToSection('servicos')} className="text-4xl font-heading font-black text-white hover:text-[#E2BA3D] transition-colors">Serviços</button>
+            <button onClick={() => scrollToSection('a-wee')} className="text-4xl font-heading font-black text-white hover:text-[#E2BA3D] transition-colors">A Wee</button>
+            <button onClick={() => scrollToSection('clientes')} className="text-4xl font-heading font-black text-white hover:text-[#E2BA3D] transition-colors">Clientes</button>
+            <button onClick={() => scrollToSection('contacto')} className="text-4xl font-heading font-black text-white hover:text-[#E2BA3D] transition-colors">Contacto</button>
           </motion.div>
         )}
       </AnimatePresence>
 
       <header id="inicio" className="relative min-h-[95vh] w-full flex items-center justify-center bg-white px-4">
-        <div className="relative z-10 w-full max-w-[1440px] mx-auto flex flex-col items-center justify-center text-center pt-24">
+        <div className="relative z-10 w-full max-w-[1440px] mx-auto flex flex-col items-center justify-center text-center pt-28">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -273,7 +290,7 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      <section id="serviços" className="py-24 md:py-40 bg-white">
+      <section id="servicos-elite" className="py-24 md:py-40 bg-white">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-end mb-24 gap-8">
             <div className="max-w-xl">
@@ -400,7 +417,7 @@ const App: React.FC = () => {
                    alt={c.name} 
                    className="h-14 md:h-20 w-auto object-contain filter brightness-0 invert group-hover:filter-none transition-all duration-500 drop-shadow-2xl" 
                 />
-                <span className="mt-8 text-[9px] font-black uppercase tracking-[0.25em] text-white/40 group-hover:text-[#E2BA3D] transition-colors">{c.region}</span>
+                <span className="mt-8 text-[9px] font-black uppercase tracking-widest text-white/40 group-hover:text-[#E2BA3D] transition-colors">{c.region}</span>
               </motion.div>
             ))}
           </div>
