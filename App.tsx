@@ -103,12 +103,10 @@ const App: React.FC = () => {
   const { scrollY, scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
 
-  // Menu background transition based on scroll
   const navBg = useTransform(scrollY, [0, 100], ["rgba(255, 255, 255, 0)", "rgba(255, 255, 255, 0.95)"]);
   const navBorder = useTransform(scrollY, [0, 100], ["rgba(255, 255, 255, 0)", "rgba(33, 61, 122, 0.05)"]);
   const navShadow = useTransform(scrollY, [0, 100], ["none", "0 10px 15px -3px rgba(0, 0, 0, 0.1)"]);
 
-  // Form State
   const [formName, setFormName] = useState("");
   const [formEmail, setFormEmail] = useState("");
   const [formChallenge, setFormChallenge] = useState("");
@@ -169,7 +167,6 @@ const App: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* NAVIGATION - TRANSPARENT OVER VIDEO */}
       <motion.nav 
         style={{ 
           backgroundColor: navBg,
@@ -210,8 +207,8 @@ const App: React.FC = () => {
         <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden p-2"><Menu className="w-5 h-5" /></button>
       </motion.nav>
 
-      {/* HERO SECTION - PERFECTLY CENTERED */}
-      <header id="inicio" className="relative h-screen w-full flex items-center justify-center overflow-hidden bg-black">
+      {/* HERO SECTION - REFINED PROPORTIONS */}
+      <header id="inicio" className="relative min-h-[85vh] md:min-h-[90vh] lg:h-screen w-full flex items-center justify-center overflow-hidden bg-black">
         {/* VIDEO BACKGROUND */}
         <div className="absolute inset-0 z-0 pointer-events-none">
           <iframe 
@@ -226,20 +223,20 @@ const App: React.FC = () => {
         {/* OVERLAY */}
         <div className="absolute inset-0 z-[1] bg-black/60 backdrop-blur-[0.5px]" />
 
-        {/* CONTENT - TRUE CENTER */}
-        <div className="relative z-10 w-full flex items-center justify-center px-8 md:px-12 h-full">
+        {/* CONTENT - ORGANIZED & ELEGANT */}
+        <div className="relative z-10 w-full flex items-center justify-center px-8 md:px-12 h-full py-20">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, ease: EASE_PREMIUM }}
-            className="flex flex-col items-center justify-center w-full max-w-[850px] text-center"
+            className="flex flex-col items-center justify-center w-full max-w-[820px] text-center"
           >
-            <h1 className="text-[1.8rem] sm:text-[2.4rem] md:text-5xl lg:text-6xl xl:text-7xl font-heading font-bold leading-[1.15] md:leading-[1.1] mb-8 md:mb-10 tracking-tight text-white capitalize text-balance">
+            <h1 className="text-[1.6rem] sm:text-[2.2rem] md:text-4xl lg:text-5xl xl:text-6xl font-heading font-bold leading-[1.2] md:leading-[1.15] mb-8 md:mb-12 tracking-tight text-white capitalize text-balance">
               Transformamos presença digital <br className="hidden md:block" /> 
               <span className="text-[#E2BA3D]">em resultados reais.</span>
             </h1>
 
-            <p className="text-[14px] sm:text-[16px] md:text-lg lg:text-[19px] font-light mb-12 md:mb-14 text-white/80 max-w-[32ch] sm:max-w-[42ch] md:max-w-[50ch] lg:max-w-[60ch] leading-relaxed mx-auto">
+            <p className="text-[13px] sm:text-[15px] md:text-base lg:text-lg font-light mb-12 md:mb-16 text-white/80 max-w-[32ch] sm:max-w-[42ch] md:max-w-[50ch] lg:max-w-[60ch] leading-relaxed mx-auto opacity-90">
               Estratégia, Formação, Conteúdo e Criatividade para marcas que querem crescer no digital.
             </p>
 
@@ -248,7 +245,7 @@ const App: React.FC = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => openWhatsApp()}
-                className="bg-[#E2BA3D] text-[#213D7A] px-10 md:px-14 py-4 md:py-5 rounded-full font-black uppercase tracking-widest text-[10px] md:text-xs shadow-2xl transition-all duration-500 w-full sm:w-auto min-w-[220px]"
+                className="bg-[#E2BA3D] text-[#213D7A] px-10 md:px-14 py-4 md:py-5 rounded-full font-black uppercase tracking-widest text-[9px] md:text-xs shadow-2xl transition-all duration-500 w-full sm:w-auto min-w-[210px]"
               >
                 Fale connosco
               </motion.button>
@@ -259,7 +256,7 @@ const App: React.FC = () => {
         <motion.div 
           animate={{ y: [0, 8, 0] }}
           transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 opacity-60 pointer-events-none z-10 text-white"
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 opacity-60 pointer-events-none z-10 text-white"
         >
           <ChevronDown className="w-8 h-8" />
         </motion.div>
@@ -286,7 +283,6 @@ const App: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* SERVICES SECTION */}
       <section id="servicos-elite" className="py-24 md:py-40 bg-white">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-end mb-24 gap-8">
@@ -327,7 +323,6 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* UNIQUE VALUES */}
       <section className="py-24 md:py-40 bg-[#213D7A] text-white relative">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-20">
@@ -365,7 +360,6 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* ABOUT US */}
       <section id="quem-somos" className="py-24 md:py-40 bg-white">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-16 md:gap-24 items-center">
@@ -401,7 +395,6 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* CLIENTS */}
       <section id="clientes" className="py-24 bg-[#213D7A]">
         <div className="max-w-7xl mx-auto px-6">
           <h2 className="text-center text-[9px] font-black uppercase tracking-[0.5em] text-white/30 mb-20">Marcas que Confiam em Nós</h2>
@@ -424,7 +417,6 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* INSTAGRAM WORK */}
       <section className="py-24 md:py-32 bg-white">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <h3 className="text-[1.8rem] md:text-4xl font-heading font-black text-[#213D7A] mb-16 tracking-widest uppercase">
@@ -466,7 +458,6 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* CONTACT FORM */}
       <section id="contacto" className="py-24 md:py-40 bg-white">
         <div className="max-w-4xl mx-auto px-6">
           <div className="text-center mb-20">
@@ -522,7 +513,6 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* FOOTER */}
       <footer className="py-20 bg-white border-t-2 border-gray-50 relative z-20">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-12 text-center md:text-left">
           <div className="flex flex-col items-center md:items-start gap-4">
@@ -559,7 +549,6 @@ const App: React.FC = () => {
         </div>
       </footer>
 
-      {/* SERVICE MODAL */}
       <AnimatePresence>
         {selectedService && (
           <React.Fragment>
