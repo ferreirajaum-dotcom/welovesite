@@ -100,10 +100,8 @@ const UNIQUE_VALUES = [
 const App: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<typeof SERVICES[0] | null>(null);
-  const [videoAutoplay, setVideoAutoplay] = useState(0); 
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
-  const videoIframeRef = useRef<HTMLIFrameElement>(null);
 
   // Form State
   const [formName, setFormName] = useState("");
@@ -112,7 +110,6 @@ const App: React.FC = () => {
 
   const scrollToSection = (id: string) => {
     setMobileMenuOpen(false);
-    // Mapeamento de links amigáveis para IDs de seção
     const sectionMap: Record<string, string> = {
       'inicio': 'inicio',
       'servicos': 'servicos-elite',
@@ -123,13 +120,10 @@ const App: React.FC = () => {
 
     const targetId = sectionMap[id] || id;
     const el = document.getElementById(targetId);
-    if (el) window.scrollTo({ top: el.offsetTop - 120, behavior: 'smooth' });
-  };
-
-  const handleShowreelClick = () => {
-    setVideoAutoplay(1);
-    const el = document.getElementById('video-institucional');
-    if (el) window.scrollTo({ top: el.offsetTop - 120, behavior: 'smooth' });
+    if (el) {
+      const offset = id === 'inicio' ? 0 : 120;
+      window.scrollTo({ top: el.offsetTop - offset, behavior: 'smooth' });
+    }
   };
 
   const handleFormSubmit = (e: React.FormEvent) => {
@@ -145,7 +139,7 @@ const App: React.FC = () => {
 
       <motion.div className="fixed top-0 left-0 right-0 h-1 bg-[#E2BA3D] origin-left z-[100]" style={{ scaleX }} />
 
-      {/* ANNOUNCEMENT TICKER - EVEN MORE COMPACT */}
+      {/* ANNOUNCEMENT TICKER */}
       <div className="fixed top-0 left-0 right-0 z-[60] bg-[#961D1D] text-white h-8 md:h-10 overflow-hidden border-b border-[#E2BA3D]/20">
         <motion.div 
           className="whitespace-nowrap flex items-center h-full gap-8 md:gap-16"
@@ -170,6 +164,7 @@ const App: React.FC = () => {
         </motion.div>
       </div>
 
+      {/* NAVIGATION */}
       <motion.nav 
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -205,57 +200,48 @@ const App: React.FC = () => {
         <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden p-2"><Menu className="w-5 h-5" /></button>
       </motion.nav>
 
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-[#213D7A] flex flex-col items-center justify-center gap-10"
-          >
-            <button onClick={() => setMobileMenuOpen(false)} className="absolute top-10 right-10 text-white"><X className="w-8 h-8" /></button>
-            <button onClick={() => scrollToSection('inicio')} className="text-4xl font-heading font-black text-white hover:text-[#E2BA3D] transition-colors">Início</button>
-            <button onClick={() => scrollToSection('servicos')} className="text-4xl font-heading font-black text-white hover:text-[#E2BA3D] transition-colors">Serviços</button>
-            <button onClick={() => scrollToSection('a-wee')} className="text-4xl font-heading font-black text-white hover:text-[#E2BA3D] transition-colors">A Wee</button>
-            <button onClick={() => scrollToSection('clientes')} className="text-4xl font-heading font-black text-white hover:text-[#E2BA3D] transition-colors">Clientes</button>
-            <button onClick={() => scrollToSection('contacto')} className="text-4xl font-heading font-black text-white hover:text-[#E2BA3D] transition-colors">Contacto</button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* HERO SECTION WITH VIDEO BACKGROUND */}
+      <header id="inicio" className="relative h-[90vh] md:h-screen w-full flex items-center justify-center overflow-hidden bg-black">
+        {/* VIDEO BACKGROUND */}
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <iframe 
+            src="https://player.vimeo.com/video/1153987727?background=1&autoplay=1&loop=1&muted=1&title=0&byline=0&portrait=0&badge=0" 
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[115%] h-[115%] md:w-[105%] md:h-[105%] object-cover scale-[1.3] md:scale-[1.1]"
+            frameBorder="0" 
+            allow="autoplay; fullscreen" 
+            title="WEE Background Video"
+          />
+        </div>
 
-      <header id="inicio" className="relative min-h-[95vh] w-full flex items-center justify-center bg-white px-4">
-        <div className="relative z-10 w-full max-w-[1440px] mx-auto flex flex-col items-center justify-center text-center pt-28">
+        {/* OVERLAY */}
+        <div className="absolute inset-0 z-[1] bg-black/50 backdrop-blur-[1px]" />
+
+        {/* CONTENT */}
+        <div className="relative z-10 w-full max-w-[1440px] mx-auto flex flex-col items-center justify-center text-center px-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, ease: EASE_PREMIUM }}
             className="flex flex-col items-center"
           >
-            <h1 className="text-[2.2rem] sm:text-[3.2rem] md:text-6xl lg:text-[5.5rem] xl:text-[6rem] font-heading font-black leading-[1.05] mb-8 tracking-tighter text-[#213D7A] mx-auto">
+            <h1 className="text-[2rem] sm:text-[3rem] md:text-5xl lg:text-[5.5rem] xl:text-[6rem] font-heading font-black leading-[1.05] mb-8 tracking-tighter text-white mx-auto">
               Transformamos presença digital <br className="hidden lg:block" /> 
               <span className="text-[#E2BA3D]">em resultados reais.</span>
             </h1>
 
-            <p className="text-sm sm:text-base md:text-xl lg:text-2xl font-light mb-12 text-[#213D7A]/80 max-w-[32ch] sm:max-w-[50ch] md:max-w-[70ch] leading-relaxed mx-auto px-4">
+            <p className="text-sm sm:text-base md:text-xl lg:text-2xl font-light mb-12 text-white/90 max-w-[32ch] sm:max-w-[50ch] md:max-w-[70ch] leading-relaxed mx-auto px-4">
               Estratégia, Formação, Conteúdo e Criatividade para marcas que querem crescer no digital.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6 w-full sm:w-auto">
               <motion.button 
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => openWhatsApp()}
-                className="bg-[#213D7A] text-white px-12 py-5 rounded-full font-bold uppercase tracking-widest text-xs shadow-2xl shadow-[#213D7A]/20 hover:bg-[#961D1D] transition-all duration-500 w-full sm:w-64"
+                className="bg-[#E2BA3D] text-[#213D7A] px-16 py-6 rounded-full font-black uppercase tracking-widest text-xs shadow-2xl shadow-[#E2BA3D]/20 transition-all duration-500 w-full sm:w-auto min-w-[280px]"
               >
                 Fale connosco
               </motion.button>
-              <button 
-                onClick={handleShowreelClick}
-                className="flex items-center gap-2 font-black uppercase text-[10px] tracking-[0.25em] hover:text-[#961D1D] transition-colors group px-4"
-              >
-                <PlayCircle className="w-5 h-5 group-hover:scale-110 transition-transform" /> 
-                Ver Showreel
-              </button>
             </div>
           </motion.div>
         </div>
@@ -263,33 +249,13 @@ const App: React.FC = () => {
         <motion.div 
           animate={{ y: [0, 8, 0] }}
           transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 opacity-20 pointer-events-none"
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 opacity-60 pointer-events-none z-10 text-white"
         >
           <ChevronDown className="w-8 h-8" />
         </motion.div>
       </header>
 
-      <section id="video-institucional" className="py-24 md:py-32 bg-gradient-to-b from-[#213D7A] via-[#2A4D96] to-[#213D7A] relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10 pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
-        <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="relative aspect-video w-full max-w-5xl mx-auto rounded-2xl overflow-hidden shadow-2xl border border-white/10"
-          >
-            <iframe 
-              ref={videoIframeRef}
-              src={`https://player.vimeo.com/video/1153987727?title=0&byline=0&portrait=0&badge=0&autopause=1&transparent=0&muted=0&autoplay=${videoAutoplay}`} 
-              className="absolute inset-0 w-full h-full"
-              frameBorder="0" 
-              allow="autoplay; fullscreen; picture-in-picture" 
-              title="Institucional WEE"
-            />
-          </motion.div>
-        </div>
-      </section>
-
+      {/* SERVICES SECTION */}
       <section id="servicos-elite" className="py-24 md:py-40 bg-white">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-end mb-24 gap-8">
@@ -330,6 +296,7 @@ const App: React.FC = () => {
         </div>
       </section>
 
+      {/* UNIQUE VALUES */}
       <section className="py-24 md:py-40 bg-[#213D7A] text-white relative">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-20">
@@ -367,6 +334,7 @@ const App: React.FC = () => {
         </div>
       </section>
 
+      {/* ABOUT US */}
       <section id="quem-somos" className="py-24 md:py-40 bg-white">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-16 md:gap-24 items-center">
@@ -402,6 +370,7 @@ const App: React.FC = () => {
         </div>
       </section>
 
+      {/* CLIENTS */}
       <section id="clientes" className="py-24 bg-[#213D7A]">
         <div className="max-w-7xl mx-auto px-6">
           <h2 className="text-center text-[9px] font-black uppercase tracking-[0.5em] text-white/30 mb-20">Marcas que Confiam em Nós</h2>
@@ -424,6 +393,7 @@ const App: React.FC = () => {
         </div>
       </section>
 
+      {/* INSTAGRAM WORK */}
       <section className="py-24 md:py-32 bg-white">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <h3 className="text-[1.8rem] md:text-4xl font-heading font-black text-[#213D7A] mb-16 tracking-widest uppercase">
@@ -465,6 +435,7 @@ const App: React.FC = () => {
         </div>
       </section>
 
+      {/* CONTACT FORM */}
       <section id="contacto" className="py-24 md:py-40 bg-white">
         <div className="max-w-4xl mx-auto px-6">
           <div className="text-center mb-20">
@@ -520,6 +491,7 @@ const App: React.FC = () => {
         </div>
       </section>
 
+      {/* FOOTER */}
       <footer className="py-20 bg-white border-t-2 border-gray-50 relative z-20">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-12 text-center md:text-left">
           <div className="flex flex-col items-center md:items-start gap-4">
@@ -556,6 +528,7 @@ const App: React.FC = () => {
         </div>
       </footer>
 
+      {/* SERVICE MODAL */}
       <AnimatePresence>
         {selectedService && (
           <React.Fragment>
