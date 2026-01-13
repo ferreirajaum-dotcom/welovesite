@@ -88,7 +88,7 @@ const UNIQUE_VALUES = [
   {
     icon: <Target className="w-5 h-5" />,
     title: "Estratégia digital adaptada à identidade e aos objetivos da sua marca",
-    text: "Desenvolvemos um plano personalizado de conteúdo alinhado aos valores da sua marca e focado em resultados reais."
+    text: "Desenvolvemos um plan personalizado de conteúdo alinhado aos valores da sua marca e focado em resultados reais."
   },
   {
     icon: <Heart className="w-5 h-5" />,
@@ -134,16 +134,26 @@ const App: React.FC = () => {
 
       <motion.div className="fixed top-0 left-0 right-0 h-1 bg-[#E2BA3D] origin-left z-[100]" style={{ scaleX }} />
 
-      <div className="fixed top-0 left-0 right-0 z-[60] bg-[#961D1D] text-white py-2.5 overflow-hidden text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase">
+      {/* ANNOUNCEMENT TICKER - REDUCED HEIGHT */}
+      <div className="fixed top-0 left-0 right-0 z-[60] bg-[#961D1D] text-white h-10 md:h-12 overflow-hidden border-b border-[#E2BA3D]/20">
         <motion.div 
-          className="whitespace-nowrap flex gap-12"
-          animate={{ x: [0, -1000] }}
-          transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+          className="whitespace-nowrap flex items-center h-full gap-8 md:gap-16"
+          animate={{ x: [0, -1500] }}
+          transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
         >
-          {[...Array(8)].map((_, i) => (
-            <div key={i} className="flex items-center gap-6">
-              <span>✦ 4º Workshop de Vídeos Elite em Breve ✦</span>
-              <a href="https://forms.gle/F4SHYr5nRvPWCscQ9" target="_blank" className="underline hover:text-[#E2BA3D] transition-colors">Pré-inscrição aberta</a>
+          {[...Array(10)].map((_, i) => (
+            <div key={i} className="flex items-center gap-4 md:gap-8 flex-shrink-0">
+              <span className="text-[9px] md:text-[12px] font-black tracking-wider uppercase leading-none">
+                EM BREVE: 4º WORKSHOP DE VÍDEOS E EDIÇÃO COM TELEMÓVEL!
+              </span>
+              <a 
+                href="https://forms.gle/F4SHYr5nRvPWCscQ9" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="bg-[#E2BA3D] text-[#213D7A] px-3 md:px-5 py-1 md:py-1.5 rounded-full text-[8px] md:text-[10px] font-black uppercase tracking-widest hover:bg-white transition-all duration-300 shadow-lg flex-shrink-0"
+              >
+                PRÉ-INSCRIÇÃO AQUI
+              </a>
             </div>
           ))}
         </motion.div>
@@ -152,7 +162,7 @@ const App: React.FC = () => {
       <motion.nav 
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="fixed top-10 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-5 bg-white/80 backdrop-blur-xl border-b border-[#213D7A]/5"
+        className="fixed top-10 md:top-12 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-5 bg-white/80 backdrop-blur-xl border-b border-[#213D7A]/5"
       >
         <div className="cursor-pointer" onClick={() => scrollToSection('inicio')}>
            <img src="https://i.postimg.cc/wvL4w0q5/logo-wee.png" alt="WEE" className="h-7 md:h-9 w-auto hover:opacity-80 transition-opacity" />
@@ -196,8 +206,8 @@ const App: React.FC = () => {
         )}
       </AnimatePresence>
 
-      <header id="inicio" className="relative min-h-[90vh] w-full flex items-center justify-center bg-white px-4">
-        <div className="relative z-10 w-full max-w-[1440px] mx-auto flex flex-col items-center justify-center text-center pt-20">
+      <header id="inicio" className="relative min-h-[95vh] w-full flex items-center justify-center bg-white px-4">
+        <div className="relative z-10 w-full max-w-[1440px] mx-auto flex flex-col items-center justify-center text-center pt-24">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
