@@ -169,7 +169,7 @@ const App: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* NAVIGATION - FULLY TRANSPARENT OVER HERO */}
+      {/* NAVIGATION */}
       <motion.nav 
         style={{ 
           backgroundColor: navBackground,
@@ -179,7 +179,6 @@ const App: React.FC = () => {
         className="fixed top-8 md:top-10 left-0 right-0 z-100 flex items-center justify-between px-6 md:px-12 py-5 border-b transition-all duration-300"
       >
         <div className="cursor-pointer" onClick={() => scrollToSection('inicio')}>
-           {/* LOGO - Filters applied via color sync with text when scrolling */}
            <motion.img 
             style={{ filter: useTransform(scrollY, [0, 100], ["brightness(0) invert(1)", "none"]) }}
             src="https://i.postimg.cc/wvL4w0q5/logo-wee.png" 
@@ -211,15 +210,14 @@ const App: React.FC = () => {
         </motion.button>
       </motion.nav>
 
-      {/* HERO SECTION - 100SVH AND NO TOP PADDING GAP */}
+      {/* HERO SECTION - REFINED CENTRALIZATION */}
       <header id="inicio" className="relative min-h-[100svh] md:min-h-[100vh] w-full flex items-center justify-center overflow-hidden bg-black">
-        {/* VIDEO BACKGROUND - OPTIMIZED FOR FULL IMMERSION */}
+        {/* VIDEO BACKGROUND */}
         <div className="absolute inset-0 z-0 pointer-events-none">
           <div className="absolute inset-0 bg-cover bg-center opacity-40 bg-[url('https://i.postimg.cc/wvL4w0q5/logo-wee.png')]" />
-          
           <iframe 
             src="https://player.vimeo.com/video/1153987727?background=1&autoplay=1&loop=1&muted=1&playsinline=1&title=0&byline=0&portrait=0&badge=0" 
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[115%] h-[115%] md:w-[105%] md:h-[105%] object-cover scale-[1.3] md:scale-[1.1]"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[115%] h-[115%] md:w-[105%] md:h-[105%] object-cover"
             frameBorder="0" 
             allow="autoplay; fullscreen" 
             title="WEE Background Video"
@@ -229,28 +227,38 @@ const App: React.FC = () => {
 
         <div className="absolute inset-0 z-[1] bg-black/50 backdrop-blur-[0.5px]" />
 
-        <div className="relative z-10 w-full flex items-center justify-center px-8 md:px-12 h-full">
+        {/* CONTENT - TRUE CENTER */}
+        <div className="relative z-10 w-full h-full flex items-center justify-center px-6 sm:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, ease: EASE_PREMIUM }}
-            className="flex flex-col items-center justify-center w-full max-w-[820px] text-center"
+            className="flex flex-col items-center text-center w-full"
           >
-            <h1 className="text-[1.8rem] sm:text-[2.2rem] md:text-5xl lg:text-6xl xl:text-7xl font-heading font-bold leading-[1.2] md:leading-[1.15] mb-8 md:mb-12 tracking-tight text-white capitalize text-balance">
+            {/* HEADLINE: TRAVED SIZES */}
+            <h1 className="font-heading font-bold text-white capitalize text-balance
+              text-[38px] leading-[1.12] max-w-[92vw] 
+              md:text-[52px] md:leading-[1.08] md:max-w-[760px]
+              lg:text-[64px] lg:leading-[1.05] lg:max-w-[900px]">
               Transformamos presença digital <br className="hidden md:block" /> 
               <span className="text-[#E2BA3D]">em resultados reais.</span>
             </h1>
 
-            <p className="text-[14px] sm:text-[16px] md:text-lg lg:text-xl font-light mb-12 md:mb-16 text-white/80 max-w-[32ch] sm:max-w-[42ch] md:max-w-[50ch] lg:max-w-[60ch] leading-relaxed mx-auto opacity-90">
+            {/* SUBTITLE: TRAVED SIZES */}
+            <p className="font-light text-white/80 opacity-90 mx-auto mt-6 md:mt-8
+              text-[14px] leading-[1.55] max-w-[86vw]
+              md:text-[16px] md:leading-[1.5] md:max-w-[640px]
+              lg:text-[18px] lg:max-w-[720px]">
               Estratégia, Formação, Conteúdo e Criatividade para marcas que querem crescer no digital.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 w-full sm:w-auto">
+            {/* CTA BUTTON */}
+            <div className="mt-[24px] md:mt-[32px]">
               <motion.button 
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => openWhatsApp()}
-                className="bg-[#E2BA3D] text-[#213D7A] px-10 md:px-14 py-4 md:py-5 rounded-full font-black uppercase tracking-widest text-[10px] md:text-xs shadow-2xl transition-all duration-500 w-full sm:w-auto min-w-[210px]"
+                className="bg-[#E2BA3D] text-[#213D7A] px-10 md:px-14 py-4 md:py-5 rounded-full font-black uppercase tracking-widest text-[10px] md:text-xs shadow-2xl transition-all duration-500 min-w-[210px]"
               >
                 Fale connosco
               </motion.button>
