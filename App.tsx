@@ -309,14 +309,13 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* QUEM SOMOS SECTION - FUNDO BRANCO */}
+      {/* QUEM SOMOS SECTION - FUNDO BRANCO E NOVAS IMAGENS */}
       <section id="quem-somos" className="py-24 bg-white text-[#213D7A] relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div className="space-y-8">
               <div>
                 <h2 className="text-4xl md:text-6xl font-heading font-black uppercase mb-4">Munik Rangel</h2>
-                <p className="text-lg font-light text-[#961D1D]">Nós somos uma agência de marketing que atende clientes no Brasil e em Portugal.</p>
               </div>
               
               <ul className="space-y-4 list-disc pl-5 marker:text-[#E2BA3D] text-sm md:text-base opacity-90 leading-relaxed font-light">
@@ -332,10 +331,26 @@ const App: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400" className="rounded-2xl h-64 w-full object-cover shadow-xl border border-gray-100" alt="Munik" />
-              <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=400" className="rounded-2xl h-64 w-full object-cover mt-8 shadow-xl border border-gray-100" alt="Munik Working" />
-              <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=400" className="rounded-2xl h-64 w-full object-cover -mt-8 shadow-xl border border-gray-100" alt="Team" />
-              <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=400" className="rounded-2xl h-64 w-full object-cover shadow-xl border border-gray-100" alt="Success" />
+              <img 
+                src="https://i.postimg.cc/CLT4zhMD/IMG-4720-Original.jpg" 
+                className="rounded-2xl h-64 w-full object-cover shadow-xl border border-gray-100 object-[center_20%]" 
+                alt="Munik Rangel Events" 
+              />
+              <img 
+                src="https://i.postimg.cc/g0TVddB0/IMG-0825-Original.avif" 
+                className="rounded-2xl h-64 w-full object-cover mt-8 shadow-xl border border-gray-100 object-[center_30%]" 
+                alt="Munik Rangel Work" 
+              />
+              <img 
+                src="https://i.postimg.cc/qBCLJhrB/IMG-2788-Original.jpg" 
+                className="rounded-2xl h-64 w-full object-cover -mt-8 shadow-xl border border-gray-100 object-[center_25%]" 
+                alt="Munik Rangel Portrait" 
+              />
+              <img 
+                src="https://i.postimg.cc/Zn3FVgHw/75813ca3-41b8-4f4b-8acd-0ce036ea3339-Original.jpg" 
+                className="rounded-2xl h-64 w-full object-cover shadow-xl border border-gray-100 object-[center_20%]" 
+                alt="Munik Rangel" 
+              />
             </div>
           </div>
         </div>
