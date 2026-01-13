@@ -1,214 +1,193 @@
 
-import React, { useState, useEffect } from 'react';
-import { motion, useScroll, useTransform, AnimatePresence, Variants } from 'framer-motion';
-import { Menu, X, Mail, ChevronLeft, ChevronRight, ArrowRight, ChevronDown, Clapperboard, ThumbsUp, Camera, Lightbulb, Instagram } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { motion, AnimatePresence, Variants, useScroll, useSpring } from 'framer-motion';
+import { Menu, X, Clapperboard, ThumbsUp, Camera, Lightbulb, Instagram, Target, Heart, ArrowUpRight, PlayCircle, ChevronDown } from 'lucide-react';
 import FluidBackground from './components/FluidBackground';
 import CustomCursor from './components/CustomCursor';
 
-// --- Constantes de Animação ---
-const TRANSITION_EASE: [number, number, number, number] = [0.23, 1, 0.32, 1];
-const ANIMATION_DURATION = 0.8;
+// --- Premium Animation Constants ---
+const EASE_PREMIUM = [0.22, 1, 0.36, 1] as any;
 
-const fadeInUp: Variants = {
-  hidden: { opacity: 0, y: 30 },
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 40 },
   visible: { 
     opacity: 1, 
-    y: 0,
-    transition: { duration: ANIMATION_DURATION, ease: TRANSITION_EASE }
+    y: 0, 
+    transition: { duration: 1, ease: EASE_PREMIUM } 
   }
 };
 
-const serviceEntranceVariants: Variants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.1, duration: 0.8, ease: TRANSITION_EASE }
-  })
+// --- WhatsApp Logic ---
+const WHATSAPP_NUMBER = "351932495020";
+
+const openWhatsApp = (message: string = "Olá! Gostaria de saber mais sobre os serviços da WEE Marketing.") => {
+  const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  window.open(url, '_blank');
 };
 
-// --- Dados ---
-const CLIENTS_BR = [
-  { id: 'br1', name: 'Trisoft', image: 'https://i.postimg.cc/PqDDB7Bg/cliente-logo-1.png' },
-  { id: 'br2', name: 'Clínica ISTO', image: 'https://i.postimg.cc/zfhh9Qsq/cliente-logo-2.png' },
-  { id: 'br3', name: 'Priscila Mattos Venturi', image: 'https://i.postimg.cc/q7KK9FPJ/cliente-logo-3.png' },
-  { id: 'br4', name: 'Anexo', image: 'https://i.postimg.cc/3wGGPqsK/cliente-logo-4.png' },
-  { id: 'br5', name: 'NRC Arq Design', image: 'https://i.postimg.cc/3wGGPqsJ/cliente-logo-5.png' },
-  { id: 'br6', name: 'CIDAD', image: 'https://i.postimg.cc/5tzzZrht/cliente-logo-6.png' },
-  { id: 'br7', name: 'Simcauto', image: 'https://i.postimg.cc/50Mz13Jm/cliente-logo-19.png' },
-  { id: 'br8', name: 'Adriana Farias', image: 'https://i.postimg.cc/kG2qp0Z3/cliente-logo-22.png' },
+// --- Data Structures ---
+const CLIENTS = [
+  { id: 'pt1', name: 'RetailBox', image: 'https://i.postimg.cc/6QZZDPkq/cliente-logo-8.png', region: 'Portugal' },
+  { id: 'pt2', name: 'Alupoli', image: 'https://i.postimg.cc/W4ZZQyBt/cliente-logo-9.png', region: 'Portugal' },
+  { id: 'pt3', name: 'Cilene Lupi', image: 'https://i.postimg.cc/bvnnK572/cliente-logo-10.png', region: 'Portugal' },
+  { id: 'pt4', name: 'RLX Rollox', image: 'https://i.postimg.cc/85VvDHGP/cliente-logo-11.png', region: 'Portugal' },
+  { id: 'br1', name: 'Trisoft', image: 'https://i.postimg.cc/PqDDB7Bg/cliente-logo-1.png', region: 'Brasil' },
+  { id: 'br2', name: 'Clínica ISTO', image: 'https://i.postimg.cc/zfhh9Qsq/cliente-logo-2.png', region: 'Brasil' },
+  { id: 'br3', name: 'Priscila Mattos Venturi', image: 'https://i.postimg.cc/q7KK9FPJ/cliente-logo-3.png', region: 'Brasil' },
+  { id: 'br4', name: 'Anexo', image: 'https://i.postimg.cc/3wGGPqsK/cliente-logo-4.png', region: 'Brasil' },
 ];
 
-const CLIENTS_PT = [
-  { id: 'pt1', name: 'RetailBox', image: 'https://i.postimg.cc/6QZZDPkq/cliente-logo-8.png' },
-  { id: 'pt2', name: 'Alupoli', image: 'https://i.postimg.cc/W4ZZQyBt/cliente-logo-9.png' },
-  { id: 'pt3', name: 'Cilene Lupi', image: 'https://i.postimg.cc/bvnnK572/cliente-logo-10.png' },
-  { id: 'pt4', name: 'RLX Rollox', image: 'https://i.postimg.cc/85VvDHGP/cliente-logo-11.png' },
-  { id: 'pt5', name: 'Escola de Empreendedores', image: 'https://i.postimg.cc/LsPPrWcg/cliente-logo-12.png' },
-  { id: 'pt6', name: 'Angelina Bunselmeyer', image: 'https://i.postimg.cc/W3PZjnV1/cliente-logo-13.png' },
-  { id: 'pt7', name: 'Croni', image: 'https://i.postimg.cc/PqDDB7gx/cliente-logo-7.png' },
+const INSTAGRAM_POSTS = [
+  { id: 1, image: 'https://images.unsplash.com/photo-1492691523567-69b9a61e0d45?auto=format&fit=crop&q=80&w=800' },
+  { id: 2, image: 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&q=80&w=800' },
+  { id: 3, image: 'https://images.unsplash.com/photo-1551316679-9c6ae9dec224?auto=format&fit=crop&q=80&w=800', active: true },
+  { id: 4, image: 'https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&q=80&w=800' },
 ];
 
 const SERVICES = [
   {
     id: 1,
-    icon: <Clapperboard className="w-8 h-8" />,
+    icon: <Clapperboard className="w-6 h-6" />,
     title: "Videomaker",
-    description: "Produzimos vídeos profissionais para empresas, profissionais independentes e público em geral.",
-    fullDescription: "Produzimos vídeos profissionais para empresas, profissionais independentes e público em geral. Seja para registar eventos privados, criar conteúdos institucionais ou promover a sua marca, cuidamos de cada detalhe: captação de imagem, edição, guião, direcção e estratégia. Transformamos momentos em histórias que criam ligação e despertam emoção.",
-    cta: "Solicite um orçamento",
-    subText: "Vamos falar"
+    tagline: "High-End Visual Production",
+    description: "Produzimos vídeos que transformam percepções e geram conexão emocional profunda.",
+    fullDescription: "Excelência técnica em captação e edição mobile. Do guião à estratégia de distribuição, cuidamos de cada detalhe para que o seu conteúdo se destaque num mercado saturado de ruído visual."
   },
   {
     id: 2,
-    icon: <ThumbsUp className="w-8 h-8" />,
+    icon: <ThumbsUp className="w-6 h-6" />,
     title: "Gestão de Redes Sociais",
-    description: "Gerimos as suas redes sociais de forma estratégica e criativa.",
-    fullDescription: "Gerimos as suas redes sociais de forma estratégica e criativa. Atuamos no Instagram, Facebook, YouTube e LinkedIn, desenvolvendo conteúdos relevantes, planeando publicações, interagindo com a audiência e analisando métricas para reforçar a presença digital da sua marca.",
-    cta: "Solicite um orçamento",
-    subText: "Vamos pensar juntos"
+    tagline: "Strategic Presence",
+    description: "Gerimos as suas redes com curadoria estética e estratégia baseada em dados.",
+    fullDescription: "Atuação no Instagram, YouTube e LinkedIn. Desenvolvemos narrativas visuais que reforçam a autoridade da sua marca enquanto criamos comunidades engajadas."
   },
   {
     id: 3,
-    icon: <Camera className="w-8 h-8" />,
+    icon: <Camera className="w-6 h-6" />,
     title: "Formação",
+    tagline: "Empowerment",
     description: "Aprenda a criar vídeos profissionais utilizando apenas o seu telemóvel.",
-    fullDescription: "Aprenda a criar vídeos profissionais utilizando apenas o seu telemóvel. Formação prática para todo o tipo de público, que combina técnicas de captação, edição e sensibilidade artística. Ideal para quem pretende produzir conteúdos de qualidade sem recorrer a equipamentos dispendiosos.",
-    cta: "Saiba mais como funciona",
-    subText: "Descobrir como funciona"
+    fullDescription: "Masterclass prática de captação, iluminação e edição mobile. Ideal para quem quer independência criativa com resultados cinematográficos."
   },
   {
     id: 4,
-    icon: <Lightbulb className="w-8 h-8" />,
+    icon: <Lightbulb className="w-6 h-6" />,
     title: "Consultoria",
-    description: "Consultoria personalizada ao vivo com a Munik Rangel.",
-    fullDescription: "Consultoria personalizada ao vivo com a Munik Rangel. Para profissionais de qualquer área que pretendem criar conteúdos em vídeo, mas não sabem por onde começar. Orientação sobre luz portátil, microfone, cenário, funcionalidades do Instagram, técnicas de captação, edição e estratégias de publicação. Tudo online, ao seu ritmo.",
-    cta: "Agende a sua consultoria",
-    subText: "Explica melhor"
+    tagline: "Insight & Strategy",
+    description: "Acesso direto à expertise de Munik Rangel para escalar sua marca.",
+    fullDescription: "Consultoria 1-to-1 para diagnosticar gaps de posicionamento e traçar um roteiro claro de crescimento digital personalizado."
   }
 ];
 
-const UNIQUE_ITEMS = [
+const UNIQUE_VALUES = [
   {
+    icon: <Camera className="w-5 h-5" />,
     title: "Produção de conteúdos em vídeo com telemóvel que contam a sua história com emoção e impacto",
-    answer: "Utilizamos técnicas profissionais de captação e edição mobile, criando vídeos autênticos que ligam emocionalmente com o seu público."
+    text: "Utilizamos técnicas profissionais de captação e edição mobile, criando vídeos autênticos que ligam emocionalmente com o seu público."
   },
   {
+    icon: <Target className="w-5 h-5" />,
     title: "Estratégia digital adaptada à identidade e aos objetivos da sua marca",
-    answer: "Desenvolvemos um plano personalizado de conteúdo alinhado aos valores da sua marca e focado em resultados reais."
+    text: "Desenvolvemos um plano personalizado de conteúdo alinhado aos valores da sua marca e focado em resultados reais."
   },
   {
-    title: "Há SEMPRE um plano exclusivo feito à sua medida.",
-    answer: "Cada projeto é único. Analisamos o seu negócio para criar uma estratégia 100% personalizada."
+    icon: <Heart className="w-5 h-5" />,
+    title: "Há SEMPRE um plano exclusivo feito à sua medida",
+    text: "Cada projeto é único. Analisamos o seu negócio para criar uma estratégia 100% personalizada feita à sua medida."
   }
 ];
 
 const App: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<typeof SERVICES[0] | null>(null);
-  const [activeAccordion, setActiveAccordion] = useState<number | null>(null);
-  const [clientPage, setClientPage] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
+  const [videoAutoplay, setVideoAutoplay] = useState(0); 
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
+  const videoIframeRef = useRef<HTMLIFrameElement>(null);
 
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  const clientsPerPage = isMobile ? 6 : 15;
-  const allClients = [...CLIENTS_PT, ...CLIENTS_BR]; 
-  const totalClientPages = Math.ceil(allClients.length / clientsPerPage);
-  const visibleClients = allClients.slice(clientPage * clientsPerPage, (clientPage + 1) * clientsPerPage);
-
-  const handlePrevClient = () => setClientPage((prev) => (prev - 1 + totalClientPages) % totalClientPages);
-  const handleNextClient = () => setClientPage((prev) => (prev + 1) % totalClientPages);
+  // Form State
+  const [formName, setFormName] = useState("");
+  const [formEmail, setFormEmail] = useState("");
+  const [formChallenge, setFormChallenge] = useState("");
 
   const scrollToSection = (id: string) => {
     setMobileMenuOpen(false);
-    const element = document.getElementById(id);
-    if (element) {
-      window.scrollTo({ top: element.offsetTop - 100, behavior: 'smooth' });
-    }
+    const el = document.getElementById(id);
+    if (el) window.scrollTo({ top: el.offsetTop - 80, behavior: 'smooth' });
+  };
+
+  const handleShowreelClick = () => {
+    setVideoAutoplay(1);
+    scrollToSection('video-institucional');
+  };
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const msg = `Olá WEE! Me chamo ${formName}. Meu e-mail é ${formEmail}. Meu desafio é: ${formChallenge}`;
+    openWhatsApp(msg);
   };
 
   return (
-    <div className="relative min-h-screen text-[#213D7A] selection:bg-[#E2BA3D] selection:text-[#213D7A] bg-white">
+    <div className="relative min-h-screen bg-white text-[#213D7A] selection:bg-[#E2BA3D] overflow-x-hidden">
       <CustomCursor />
       <FluidBackground />
 
-      {/* TOP CRAWL BAR */}
-      <div className="fixed top-0 left-0 right-0 z-[60] bg-[#961D1D] text-white py-2 overflow-hidden border-b border-[#E2BA3D]">
+      <motion.div className="fixed top-0 left-0 right-0 h-1 bg-[#E2BA3D] origin-left z-[100]" style={{ scaleX }} />
+
+      <div className="fixed top-0 left-0 right-0 z-[60] bg-[#961D1D] text-white py-2.5 overflow-hidden text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase">
         <motion.div 
-          className="whitespace-nowrap flex items-center gap-8"
+          className="whitespace-nowrap flex gap-12"
           animate={{ x: [0, -1000] }}
-          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+          transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
         >
-          {[...Array(10)].map((_, i) => (
-            <div key={i} className="flex items-center gap-4">
-              <span className="font-bold uppercase tracking-tighter text-sm">Em breve: 4º Workshop de Vídeos e Edição com Telemóvel!</span>
-              <a 
-                href="https://forms.gle/F4SHYr5nRvPWCscQ9" 
-                target="_blank" 
-                className="bg-[#E2BA3D] text-[#213D7A] px-3 py-0.5 rounded-full text-[10px] font-black uppercase hover:scale-105 transition-transform"
-              >
-                Pré-inscrição aqui
-              </a>
+          {[...Array(8)].map((_, i) => (
+            <div key={i} className="flex items-center gap-6">
+              <span>✦ 4º Workshop de Vídeos Elite em Breve ✦</span>
+              <a href="https://forms.gle/F4SHYr5nRvPWCscQ9" target="_blank" className="underline hover:text-[#E2BA3D] transition-colors">Pré-inscrição aberta</a>
             </div>
           ))}
         </motion.div>
       </div>
-      
-      {/* Navigation */}
+
       <motion.nav 
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        className="fixed top-9 left-0 right-0 z-40 flex items-center justify-between px-6 md:px-12 py-5 bg-white/90 backdrop-blur-md border-b border-[#213D7A]/10 shadow-sm"
+        initial={{ y: -50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        className="fixed top-10 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-5 bg-white/80 backdrop-blur-xl border-b border-[#213D7A]/5"
       >
-        <div className="z-50 cursor-pointer" onClick={() => scrollToSection('inicio')}>
-           <img 
-             src="https://i.postimg.cc/wvL4w0q5/logo-wee.png" 
-             alt="WEE MARKETING" 
-             className="h-8 md:h-10 w-auto object-contain"
-           />
+        <div className="cursor-pointer" onClick={() => scrollToSection('inicio')}>
+           <img src="https://i.postimg.cc/wvL4w0q5/logo-wee.png" alt="WEE" className="h-7 md:h-9 w-auto hover:opacity-80 transition-opacity" />
         </div>
         
-        <div className="hidden lg:flex gap-8 text-[11px] font-bold tracking-widest uppercase">
-          {['Início', 'O que fazemos', 'Quem somos', 'Clientes', 'Portefólio', 'Contacto'].map((label) => (
+        <div className="hidden lg:flex gap-10 text-[10px] font-black tracking-[0.25em] uppercase">
+          {['Início', 'Serviços', 'A Wee', 'Clientes', 'Contacto'].map((label) => (
             <button 
               key={label} 
-              onClick={() => scrollToSection(label.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, '-'))}
-              className="hover:text-[#961D1D] transition-colors relative group"
+              onClick={() => scrollToSection(label === 'A Wee' ? 'quem-somos' : label.toLowerCase().replace('ç', 'c'))}
+              className="hover:text-[#961D1D] transition-all relative group py-2"
             >
               {label}
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#961D1D] transition-all duration-300 group-hover:w-full" />
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#961D1D] transition-all duration-500 group-hover:w-full" />
             </button>
           ))}
         </div>
 
-        <button 
-          className="lg:hidden text-[#213D7A] z-50"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        >
-           {mobileMenuOpen ? <X /> : <Menu />}
-        </button>
+        <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden p-2"><Menu className="w-6 h-6" /></button>
       </motion.nav>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, x: '100%' }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: '100%' }}
-            className="fixed inset-0 z-30 bg-[#213D7A] flex flex-col items-center justify-center gap-8 text-white"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-[#213D7A] flex flex-col items-center justify-center gap-10"
           >
-            {['Início', 'O que fazemos', 'Quem somos', 'Clientes', 'Portefólio', 'Contacto'].map((label) => (
+            <button onClick={() => setMobileMenuOpen(false)} className="absolute top-10 right-10 text-white"><X className="w-8 h-8" /></button>
+            {['Início', 'Serviços', 'A Wee', 'Clientes', 'Contacto'].map((label) => (
               <button
                 key={label}
-                onClick={() => scrollToSection(label.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, '-'))}
-                className="text-3xl font-heading font-bold uppercase"
+                onClick={() => scrollToSection(label === 'A Wee' ? 'quem-somos' : label.toLowerCase().replace('ç', 'c'))}
+                className="text-4xl font-heading font-black text-white hover:text-[#E2BA3D] transition-colors"
               >
                 {label}
               </button>
@@ -217,76 +196,106 @@ const App: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* HERO SECTION */}
-      <header id="inicio" className="relative h-screen flex flex-col items-center justify-center pt-20">
-        <div className="max-w-5xl mx-auto px-6 text-center z-10">
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
+      <header id="inicio" className="relative min-h-[90vh] w-full flex items-center justify-center bg-white px-4">
+        <div className="relative z-10 w-full max-w-[1440px] mx-auto flex flex-col items-center justify-center text-center pt-20">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-7xl font-heading font-black leading-[1.1] mb-6"
+            transition={{ duration: 1.2, ease: EASE_PREMIUM }}
+            className="flex flex-col items-center"
           >
-            Transformamos presença digital em resultados reais.
-          </motion.h1>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-lg md:text-xl font-light mb-10 text-[#213D7A]/80 max-w-3xl mx-auto"
-          >
-            Estratégia, Formação, Conteúdo e Criatividade para marcas que querem crescer no digital.
-          </motion.p>
-          <motion.button 
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => scrollToSection('contacto')}
-            className="bg-[#213D7A] text-white px-10 py-5 rounded-full font-bold uppercase tracking-widest text-sm shadow-xl hover:bg-[#961D1D] transition-colors"
-          >
-            Fale connosco
-          </motion.button>
+            <h1 className="text-[2.2rem] sm:text-[3.2rem] md:text-6xl lg:text-[5.5rem] xl:text-[6rem] font-heading font-black leading-[1.05] mb-8 tracking-tighter text-[#213D7A] mx-auto">
+              Transformamos presença digital <br className="hidden lg:block" /> 
+              <span className="text-[#E2BA3D]">em resultados reais.</span>
+            </h1>
+
+            <p className="text-sm sm:text-base md:text-xl lg:text-2xl font-light mb-12 text-[#213D7A]/80 max-w-[32ch] sm:max-w-[50ch] md:max-w-[70ch] leading-relaxed mx-auto px-4">
+              Estratégia, Formação, Conteúdo e Criatividade para marcas que querem crescer no digital.
+            </p>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 w-full sm:w-auto">
+              <motion.button 
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => openWhatsApp()}
+                className="bg-[#213D7A] text-white px-12 py-5 rounded-full font-bold uppercase tracking-widest text-xs shadow-2xl shadow-[#213D7A]/20 hover:bg-[#961D1D] transition-all duration-500 w-full sm:w-64"
+              >
+                Fale connosco
+              </motion.button>
+              <button 
+                onClick={handleShowreelClick}
+                className="flex items-center gap-2 font-black uppercase text-[10px] tracking-[0.25em] hover:text-[#961D1D] transition-colors group px-4"
+              >
+                <PlayCircle className="w-5 h-5 group-hover:scale-110 transition-transform" /> 
+                Ver Showreel
+              </button>
+            </div>
+          </motion.div>
         </div>
-        
-        {/* Video Background */}
-        <div className="absolute inset-0 -z-10 opacity-10 flex items-center justify-center overflow-hidden">
-           <iframe 
-             src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&controls=0&loop=1&playlist=dQw4w9WgXcQ" 
-             className="w-[150%] h-[150%] object-cover pointer-events-none"
-             title="Munik Intro"
-           ></iframe>
-        </div>
+
+        <motion.div 
+          animate={{ y: [0, 8, 0] }}
+          transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 opacity-20 pointer-events-none"
+        >
+          <ChevronDown className="w-8 h-8" />
+        </motion.div>
       </header>
 
-      {/* SERVIÇOS SECTION */}
-      <section id="o-que-fazemos" className="py-24 bg-white">
+      <section id="video-institucional" className="py-24 md:py-32 bg-gradient-to-b from-[#213D7A] via-[#2A4D96] to-[#213D7A] relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10 pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="relative aspect-video w-full max-w-5xl mx-auto rounded-2xl overflow-hidden shadow-2xl border border-white/10"
+          >
+            <iframe 
+              ref={videoIframeRef}
+              src={`https://player.vimeo.com/video/1153987727?title=0&byline=0&portrait=0&badge=0&autopause=1&transparent=0&muted=0&autoplay=${videoAutoplay}`} 
+              className="absolute inset-0 w-full h-full"
+              frameBorder="0" 
+              allow="autoplay; fullscreen; picture-in-picture" 
+              title="Institucional WEE"
+            />
+          </motion.div>
+        </div>
+      </section>
+
+      <section id="serviços" className="py-24 md:py-40 bg-white">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-heading font-black uppercase mb-4">O que fazemos</h2>
-            <div className="w-20 h-1.5 bg-[#E2BA3D] mx-auto rounded-full" />
+          <div className="flex flex-col md:flex-row justify-between items-end mb-24 gap-8">
+            <div className="max-w-xl">
+              <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-[#E2BA3D] mb-4">Soluções Elite</h2>
+              <h3 className="text-3xl md:text-6xl font-heading font-black text-[#213D7A] leading-tight text-balance">CAPACIDADE CRIATIVA SOB DEMANDA.</h3>
+            </div>
+            <div className="w-full md:w-auto">
+              <p className="text-[#213D7A]/40 font-bold uppercase text-[9px] tracking-[0.3em]">Scroll para explorar ✦</p>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {SERVICES.map((service, i) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {SERVICES.map((s) => (
               <motion.div
-                key={service.id}
-                custom={i}
+                key={s.id}
+                variants={itemVariants}
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true }}
-                variants={serviceEntranceVariants}
-                className="bg-gray-50 p-8 rounded-[2rem] border border-gray-100 flex flex-col justify-between hover:shadow-2xl transition-shadow group"
+                whileHover={{ y: -8 }}
+                className="p-10 bg-gray-50 border border-gray-100 rounded-[3rem] group hover:bg-[#213D7A] hover:text-white transition-all duration-700 flex flex-col min-h-[400px]"
               >
-                <div>
-                  <div className="text-[#E2BA3D] mb-6 group-hover:scale-110 transition-transform origin-left">{service.icon}</div>
-                  <h3 className="text-xl font-heading font-bold mb-4">{service.title}</h3>
-                  <p className="text-sm text-[#213D7A]/70 mb-8 leading-relaxed line-clamp-4">{service.description}</p>
+                <div className="mb-8 w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center text-[#213D7A] group-hover:scale-105 transition-transform">
+                  {s.icon}
                 </div>
-                <div className="flex flex-col gap-2">
-                  <button 
-                    onClick={() => setSelectedService(service)}
-                    className="text-[10px] font-black uppercase tracking-widest bg-[#213D7A] text-white py-3 rounded-full hover:bg-[#961D1D] transition-colors"
-                  >
-                    {service.cta}
+                <div className="mt-auto">
+                  <p className="text-[9px] font-black uppercase tracking-widest opacity-40 mb-2">{s.tagline}</p>
+                  <h4 className="text-xl md:text-2xl font-heading font-bold mb-4">{s.title}</h4>
+                  <p className="text-sm opacity-60 leading-relaxed mb-8 line-clamp-3">{s.description}</p>
+                  <button onClick={() => setSelectedService(s)} className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest border-b border-current pb-1 w-fit group-hover:border-[#E2BA3D]">
+                    Detalhes <ArrowUpRight className="w-3 h-3" />
                   </button>
-                  <span className="text-[9px] uppercase font-bold text-center opacity-40">{service.subText}</span>
                 </div>
               </motion.div>
             ))}
@@ -294,203 +303,232 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* O QUE NOS TORNA ÚNICOS */}
-      <section className="py-20 bg-[#213D7A] text-white">
-        <div className="max-w-5xl mx-auto px-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-heading font-black uppercase mb-12">O que nos torna únicos</h2>
-          <div className="space-y-4">
-            {UNIQUE_ITEMS.map((item, i) => (
-              <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-6 text-left">
-                <h3 className="font-bold text-lg mb-2 text-[#E2BA3D]">{item.title}</h3>
-                <p className="text-sm opacity-80">{item.answer}</p>
-              </div>
+      <section className="py-24 md:py-40 bg-[#213D7A] text-white relative">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-20">
+             <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-[#E2BA3D] mb-4">Exclusividade</h2>
+             <h3 className="text-3xl md:text-5xl font-heading font-black uppercase tracking-tighter">O que nos torna únicos</h3>
+          </div>
+          <div className="grid lg:grid-cols-3 gap-16 md:gap-24">
+            {UNIQUE_VALUES.map((val, i) => (
+              <motion.div 
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.2 }}
+                whileHover={{ scale: 1.05, y: -10 }}
+                className="flex flex-col items-center sm:items-start text-center sm:text-left space-y-6 cursor-default p-6 rounded-[2rem] hover:bg-white/5 transition-colors group"
+              >
+                <motion.div 
+                  whileHover={{ rotate: 15 }}
+                  className="text-[#E2BA3D] w-12 h-12 border border-white/10 rounded-full flex items-center justify-center flex-shrink-0 bg-[#213D7A]"
+                >
+                  {val.icon}
+                </motion.div>
+                <div className="space-y-4">
+                  <h4 className="text-lg md:text-xl font-heading font-black uppercase tracking-tight leading-tight min-h-[4rem] flex items-center group-hover:text-[#E2BA3D] transition-colors">
+                    {val.title}
+                  </h4>
+                  <p className="text-white/50 leading-relaxed font-light text-sm md:text-base">
+                    {val.text}
+                  </p>
+                </div>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* QUEM SOMOS SECTION - FUNDO BRANCO E NOVAS IMAGENS */}
-      <section id="quem-somos" className="py-24 bg-white text-[#213D7A] relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div className="space-y-8">
-              <div>
-                <h2 className="text-4xl md:text-6xl font-heading font-black uppercase mb-4">Munik Rangel</h2>
+      <section id="quem-somos" className="py-24 md:py-40 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid lg:grid-cols-2 gap-16 md:gap-24 items-center">
+            <div className="relative px-2">
+              <div className="grid grid-cols-2 gap-4">
+                <img src="https://i.postimg.cc/CLT4zhMD/IMG-4720-Original.jpg" className="rounded-3xl h-64 md:h-80 w-full object-cover shadow-2xl" alt="Munik" />
+                <img src="https://i.postimg.cc/g0TVddB0/IMG-0825-Original.avif" className="rounded-3xl h-64 md:h-80 w-full object-cover mt-8 md:mt-12 shadow-2xl" alt="Munik" />
+                <img src="https://i.postimg.cc/qBCLJhrB/IMG-2788-Original.jpg" className="rounded-3xl h-64 md:h-80 w-full object-cover -mt-8 md:-mt-12 shadow-2xl" alt="Munik" />
+                <img src="https://i.postimg.cc/Zn3FVgHw/75813ca3-41b8-4f4b-8acd-0ce036ea3339-Original.jpg" className="rounded-3xl h-64 md:h-80 w-full object-cover shadow-2xl" alt="Munik" />
               </div>
-              
-              <ul className="space-y-4 list-disc pl-5 marker:text-[#E2BA3D] text-sm md:text-base opacity-90 leading-relaxed font-light">
-                <li>Estratega de marketing brasileira, há 27 anos.</li>
-                <li>Certificada pela New York Film Academy.</li>
-                <li>Experiência em grandes empresas como TV Globo, MTV, IBM, BASF e DELL.</li>
-                <li>Head Customer Experience do app My Heineken.</li>
-                <li>Nos últimos anos, dedica-se ao marketing digital, gestão de redes sociais e produção de conteúdo em vídeo.</li>
-                <li>Ajuda marcas a fortalecer sua presença digital e aumentar sua percepção de valor.</li>
-                <li>Na Europa, tem trabalhado com diferentes nichos como imobiliário, terapias, estética, restauração e medicina integrativa.</li>
-                <li>Colaborou com duas revistas e coberturas de eventos em Lisboa, Paris e na Semana de Design de Milão.</li>
-              </ul>
+              <div className="absolute -bottom-8 -right-4 md:-bottom-10 md:-right-10 w-32 h-32 md:w-40 md:h-40 bg-[#E2BA3D] rounded-full flex items-center justify-center p-6 text-center leading-tight font-black uppercase text-[8px] md:text-[10px] hidden sm:flex shadow-2xl">
+                27 Anos de Experiência Global
+              </div>
             </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <img 
-                src="https://i.postimg.cc/CLT4zhMD/IMG-4720-Original.jpg" 
-                className="rounded-2xl h-64 w-full object-cover shadow-xl border border-gray-100 object-[center_20%]" 
-                alt="Munik Rangel Events" 
-              />
-              <img 
-                src="https://i.postimg.cc/g0TVddB0/IMG-0825-Original.avif" 
-                className="rounded-2xl h-64 w-full object-cover mt-8 shadow-xl border border-gray-100 object-[center_30%]" 
-                alt="Munik Rangel Work" 
-              />
-              <img 
-                src="https://i.postimg.cc/qBCLJhrB/IMG-2788-Original.jpg" 
-                className="rounded-2xl h-64 w-full object-cover -mt-8 shadow-xl border border-gray-100 object-[center_25%]" 
-                alt="Munik Rangel Portrait" 
-              />
-              <img 
-                src="https://i.postimg.cc/Zn3FVgHw/75813ca3-41b8-4f4b-8acd-0ce036ea3339-Original.jpg" 
-                className="rounded-2xl h-64 w-full object-cover shadow-xl border border-gray-100 object-[center_20%]" 
-                alt="Munik Rangel" 
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CLIENTES SECTION */}
-      <section id="clientes" className="relative z-10 py-20 bg-[#213D7A] w-full overflow-hidden">
-        <div className="max-w-[1400px] mx-auto px-6 relative">
-          
-          <motion.div 
-            className="flex flex-col items-center justify-center mb-12 text-center"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeInUp}
-          >
-             <div className="w-24 h-[1px] bg-white mb-6 opacity-30"></div>
-             <h2 className="text-4xl md:text-5xl font-heading font-black uppercase text-white tracking-widest">
-              CLIENTES
-            </h2>
-          </motion.div>
-
-          <div className="flex items-center justify-center relative">
-             <button 
-               type="button"
-               onClick={handlePrevClient}
-               className="hidden md:flex absolute -left-12 lg:-left-24 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors p-2 z-20"
-             >
-               <ChevronLeft className="w-10 h-10" />
-             </button>
-
-             <div className="w-full flex items-center justify-center min-h-[350px]">
-               <AnimatePresence mode="wait">
-                 <motion.div
-                   key={clientPage}
-                   initial={{ opacity: 0 }}
-                   animate={{ opacity: 1 }}
-                   exit={{ opacity: 0 }}
-                   transition={{ duration: 0.4 }}
-                   className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-x-8 gap-y-12 w-full items-center justify-items-center"
-                 >
-                   {visibleClients.map((client, index) => (
-                     <motion.div
-                       key={client.id}
-                       className="w-full flex flex-col items-center justify-center px-4"
-                       initial={{ opacity: 0, y: 15 }}
-                       animate={{ opacity: 1, y: 0 }}
-                       transition={{ duration: 0.4, delay: index * 0.02 }}
-                     >
-                         <img 
-                           src={client.image} 
-                           alt={client.name} 
-                           className="w-auto max-h-20 md:max-h-28 object-contain filter brightness-0 invert opacity-70 hover:opacity-100 transition-opacity duration-300"
-                           loading="eager"
-                         />
-                         <span className="mt-4 text-[10px] font-black uppercase tracking-widest text-white/40">{client.id.startsWith('pt') ? 'Portugal' : 'Brasil'}</span>
-                     </motion.div>
-                   ))}
-                 </motion.div>
-               </AnimatePresence>
-             </div>
-
-             <button 
-               type="button"
-               onClick={handleNextClient}
-               className="hidden md:flex absolute -right-12 lg:-right-24 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors p-2 z-20"
-             >
-               <ChevronRight className="w-10 h-10" />
-             </button>
-          </div>
-
-          <div className="flex md:hidden justify-center gap-12 mt-12">
-             <button onClick={handlePrevClient} className="text-white/50"><ChevronLeft className="w-10 h-10" /></button>
-             <button onClick={handleNextClient} className="text-white/50"><ChevronRight className="w-10 h-10" /></button>
-          </div>
-        </div>
-      </section>
-
-      {/* PORTEFOLIO SECTION */}
-      <section id="portefolio" className="py-24 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <h2 className="text-3xl font-heading font-black uppercase mb-12">O nosso trabalho no Instagram</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="aspect-square bg-gray-200 rounded-xl overflow-hidden relative group cursor-pointer shadow-lg">
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                  <Instagram className="text-white w-8 h-8" />
+            <div className="space-y-10">
+              <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-[#961D1D]">The Visionary</h2>
+              <h3 className="text-3xl md:text-6xl font-heading font-black">MUNIK RANGEL.</h3>
+              <p className="text-base md:text-lg text-[#213D7A]/60 leading-relaxed font-light">
+                Ex-Globo, IBM e BASF. Head de CX e estrategista digital certificada pela New York Film Academy. Munik combina a sofisticação da televisão com a agilidade do digital.
+              </p>
+              <div className="grid grid-cols-2 gap-8 border-t border-gray-100 pt-10">
+                <div>
+                  <h5 className="font-black uppercase text-[9px] tracking-widest text-[#E2BA3D] mb-2">Expertise</h5>
+                  <p className="text-[11px] font-bold opacity-60">High-End Videomaking, Gestão de Marca, CX.</p>
+                </div>
+                <div>
+                  <h5 className="font-black uppercase text-[9px] tracking-widest text-[#E2BA3D] mb-2">Localização</h5>
+                  <p className="text-[11px] font-bold opacity-60">Lisboa ✦ Global</p>
                 </div>
               </div>
-            ))}
+            </div>
           </div>
-          <button className="mt-12 text-[10px] font-black uppercase tracking-widest border-2 border-[#213D7A] px-10 py-4 rounded-full hover:bg-[#213D7A] hover:text-white transition-all shadow-md">
-            Ver Portefólio Completo
-          </button>
         </div>
       </section>
 
-      {/* CONTACTO SECTION */}
-      <section id="contacto" className="py-24 bg-white">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-4xl md:text-6xl font-heading font-black uppercase mb-4 leading-tight">A sua marca, mais forte no digital.</h2>
-          <p className="text-lg opacity-60 mb-12 max-w-2xl mx-auto font-light">Estratégia, conteúdo e resultados que fazem crescer o seu negócio.</p>
+      <section id="clientes" className="py-24 bg-[#213D7A]">
+        <div className="max-w-7xl mx-auto px-6">
+          <h2 className="text-center text-[9px] font-black uppercase tracking-[0.5em] text-white/30 mb-20">Marcas que Confiam em Nós</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-y-24 gap-x-16 items-center justify-items-center opacity-80 hover:opacity-100 transition-opacity duration-1000">
+            {CLIENTS.map(c => (
+              <motion.div 
+                key={c.id} 
+                whileHover={{ scale: 1.15 }}
+                className="flex flex-col items-center group w-full max-w-[200px] transition-all duration-500"
+              >
+                <img 
+                   src={c.image} 
+                   alt={c.name} 
+                   className="h-14 md:h-20 w-auto object-contain filter brightness-0 invert group-hover:filter-none transition-all duration-500 drop-shadow-2xl" 
+                />
+                <span className="mt-8 text-[9px] font-black uppercase tracking-[0.25em] text-white/40 group-hover:text-[#E2BA3D] transition-colors">{c.region}</span>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-24 md:py-32 bg-white">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <h3 className="text-[1.8rem] md:text-4xl font-heading font-black text-[#213D7A] mb-16 tracking-widest uppercase">
+            O nosso trabalho no Instagram
+          </h3>
           
-          <form className="space-y-6 text-left bg-gray-50 p-8 md:p-12 rounded-[3rem] shadow-sm border border-gray-100">
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest opacity-40">Nome</label>
-                <input type="text" className="w-full bg-white border-b-2 border-gray-200 py-3 px-4 focus:outline-none focus:border-[#213D7A] rounded-lg" />
+          <div className="flex flex-wrap md:flex-nowrap items-center justify-center gap-4 md:gap-6 mb-16">
+            {INSTAGRAM_POSTS.map((post) => (
+              <motion.div
+                key={post.id}
+                whileHover={{ scale: 1.03 }}
+                className={`relative overflow-hidden rounded-2xl shadow-xl w-full sm:w-[45%] md:w-1/4 aspect-square ${post.active ? 'bg-gray-400' : 'bg-gray-100'}`}
+              >
+                <img 
+                  src={post.image} 
+                  alt="Portfolio Instagram" 
+                  className={`w-full h-full object-cover ${post.active ? 'opacity-70' : 'opacity-100'}`} 
+                />
+                {post.active && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Instagram className="w-12 h-12 text-white" />
+                  </div>
+                )}
+                {post.active && (
+                   <div className="absolute top-4 right-4 w-3 h-3 bg-[#E2BA3D] rounded-full shadow-lg" />
+                )}
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => openWhatsApp()}
+            className="px-8 py-3 rounded-full border border-[#213D7A] text-[10px] font-bold text-[#213D7A] uppercase tracking-widest hover:bg-[#213D7A] hover:text-white transition-all duration-300"
+          >
+            Ver portfólio completo
+          </motion.button>
+        </div>
+      </section>
+
+      <section id="contacto" className="py-24 md:py-40 bg-white">
+        <div className="max-w-4xl mx-auto px-6">
+          <div className="text-center mb-20">
+            <h3 className="text-4xl md:text-7xl font-heading font-black mb-6 uppercase">VAMOS ESCALAR?</h3>
+            <p className="text-[#213D7A]/40 font-bold uppercase text-[10px] tracking-[0.3em]">Preencha para receber uma proposta exclusiva.</p>
+          </div>
+          
+          <form className="space-y-12" onSubmit={handleFormSubmit}>
+            <div className="grid md:grid-cols-2 gap-12">
+              <div className="group border-b border-gray-100 focus-within:border-[#213D7A] transition-colors">
+                <label className="text-[9px] font-black uppercase tracking-widest opacity-40">Seu Nome</label>
+                <input 
+                  type="text" 
+                  required
+                  className="w-full bg-transparent py-4 focus:outline-none text-lg font-medium" 
+                  placeholder="Ex: João Silva"
+                  value={formName}
+                  onChange={(e) => setFormName(e.target.value)}
+                />
               </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest opacity-40">E-mail</label>
-                <input type="email" className="w-full bg-white border-b-2 border-gray-200 py-3 px-4 focus:outline-none focus:border-[#213D7A] rounded-lg" />
+              <div className="group border-b border-gray-100 focus-within:border-[#213D7A] transition-colors">
+                <label className="text-[9px] font-black uppercase tracking-widest opacity-40">E-mail Corporativo</label>
+                <input 
+                  type="email" 
+                  required
+                  className="w-full bg-transparent py-4 focus:outline-none text-lg font-medium" 
+                  placeholder="joao@empresa.com"
+                  value={formEmail}
+                  onChange={(e) => setFormEmail(e.target.value)}
+                />
               </div>
             </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest opacity-40">Mensagem</label>
-              <textarea rows={4} className="w-full bg-white border-b-2 border-gray-200 py-3 px-4 focus:outline-none focus:border-[#213D7A] rounded-lg" />
+            <div className="group border-b border-gray-100 focus-within:border-[#213D7A] transition-colors">
+              <label className="text-[9px] font-black uppercase tracking-widest opacity-40">Descreva seu Desafio</label>
+              <textarea 
+                rows={3} 
+                required
+                className="w-full bg-transparent py-4 focus:outline-none text-lg font-medium resize-none" 
+                placeholder="O que pretende alcançar conosco?"
+                value={formChallenge}
+                onChange={(e) => setFormChallenge(e.target.value)}
+              />
             </div>
-            <button className="w-full bg-[#213D7A] text-white py-5 rounded-full font-bold uppercase tracking-widest text-sm hover:bg-[#961D1D] transition-colors shadow-xl">Enviar Mensagem</button>
+            <motion.button 
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.99 }}
+              type="submit"
+              className="w-full bg-[#213D7A] text-white py-6 rounded-full font-black uppercase tracking-widest text-[10px] hover:bg-[#961D1D] transition-all shadow-xl"
+            >
+              Iniciar Conversa
+            </motion.button>
           </form>
         </div>
       </section>
 
-      <footer className="py-12 border-t border-gray-100 bg-white">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
-          <img 
-            src="https://i.postimg.cc/wvL4w0q5/logo-wee.png" 
-            alt="WEE MARKETING" 
-            className="h-10 md:h-12 w-auto object-contain"
-          />
-          <div className="flex gap-8 text-[10px] font-bold uppercase tracking-widest opacity-40">
-             <a href="https://www.instagram.com/wee_marketing/" target="_blank" className="hover:opacity-100 transition-opacity">Instagram</a>
-             <a href="#" className="hover:opacity-100 transition-opacity">LinkedIn</a>
-             <a href="#" className="hover:opacity-100 transition-opacity">YouTube</a>
+      <footer className="py-20 bg-white border-t-2 border-gray-50 relative z-20">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-12 text-center md:text-left">
+          <div className="flex flex-col items-center md:items-start gap-4">
+            <img src="https://i.postimg.cc/wvL4w0q5/logo-wee.png" alt="WEE" className="h-10 opacity-100 hover:scale-105 transition-transform cursor-pointer" />
           </div>
-          <p className="text-[10px] opacity-40 font-mono tracking-tighter">© 2025 WEE MARKETING. Criado por @ethoss.x</p>
+          
+          <div className="flex flex-col md:flex-row items-center gap-10">
+            <div className="flex gap-12 text-[11px] font-black uppercase tracking-widest">
+              <a 
+                href="https://www.instagram.com/munikrangel/" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-[#213D7A] hover:text-[#961D1D] transition-all relative group"
+              >
+                Instagram
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#961D1D] group-hover:w-full transition-all duration-300"></span>
+              </a>
+              <button 
+                onClick={() => openWhatsApp()}
+                className="text-[#213D7A] hover:text-[#961D1D] transition-all relative group uppercase"
+              >
+                WhatsApp
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#961D1D] group-hover:w-full transition-all duration-300"></span>
+              </button>
+            </div>
+          </div>
+
+          <div className="flex flex-col items-center md:items-end gap-2">
+            <p className="text-[9px] font-black text-[#213D7A] uppercase tracking-[0.2em]">
+              © 2025 WEE MARKETING CRIADO POR: ETHOSS.X
+            </p>
+            <p className="text-[7px] font-bold opacity-20 uppercase tracking-widest">Elevando o Padrão de Conteúdo</p>
+          </div>
         </div>
       </footer>
 
-      {/* SERVICE DETAILS MODAL */}
       <AnimatePresence>
         {selectedService && (
           <React.Fragment>
@@ -499,26 +537,26 @@ const App: React.FC = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelectedService(null)}
-              className="fixed inset-0 bg-black/60 z-[70] backdrop-blur-sm"
+              className="fixed inset-0 bg-[#213D7A]/95 z-[100] backdrop-blur-2xl"
             />
-            <div className="fixed inset-0 z-[80] flex items-center justify-center p-4">
+            <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
               <motion.div
-                initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                className="bg-white rounded-[3rem] w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl p-8 md:p-12"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.98 }}
+                className="bg-white rounded-[3rem] w-full max-w-2xl max-h-[85vh] overflow-y-auto p-10 md:p-20 relative"
               >
-                <div className="flex justify-between items-start mb-8">
-                  <div className="text-[#E2BA3D]">{selectedService.icon}</div>
-                  <button onClick={() => setSelectedService(null)} className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"><X /></button>
-                </div>
-                <h3 className="text-3xl font-heading font-bold mb-6">{selectedService.title}</h3>
-                <p className="text-lg opacity-70 leading-relaxed mb-10 whitespace-pre-line">{selectedService.fullDescription}</p>
+                <button onClick={() => setSelectedService(null)} className="absolute top-8 right-8 text-[#213D7A]/20 hover:text-[#213D7A] transition-colors"><X className="w-6 h-6" /></button>
+                <div className="text-[#E2BA3D] mb-8">{selectedService.icon}</div>
+                <h3 className="text-3xl md:text-4xl font-heading font-black mb-8 leading-tight">{selectedService.title}</h3>
+                <p className="text-base md:text-lg font-light opacity-60 leading-relaxed mb-12">
+                  {selectedService.fullDescription}
+                </p>
                 <button 
-                  onClick={() => window.open('https://wa.me/', '_blank')}
-                  className="w-full bg-[#213D7A] text-white py-5 rounded-full font-bold uppercase tracking-widest text-sm hover:bg-[#961D1D] transition-colors"
+                  onClick={() => openWhatsApp(`Olá! Gostaria de falar sobre o serviço: ${selectedService.title}`)}
+                  className="w-full bg-[#213D7A] text-white py-6 rounded-full font-black uppercase tracking-widest text-[10px] hover:bg-[#961D1D] transition-all"
                 >
-                  {selectedService.cta}
+                  Falar via WhatsApp
                 </button>
               </motion.div>
             </div>
