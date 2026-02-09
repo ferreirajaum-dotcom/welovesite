@@ -52,7 +52,7 @@ const CLIENTS_BR = [
   { id: 'br10', name: 'Cliente Brasil 10', image: 'https://i.postimg.cc/htxYfFgm/IMG-8901-removebg-preview.png' },
   { id: 'br11', name: 'Cliente Brasil 11', image: 'https://i.postimg.cc/3wTcGLJJ/IMG-8903-removebg-preview.png' },
   { id: 'br12', name: 'Cliente Brasil 12', image: 'https://i.postimg.cc/1zQjFW53/IMG-8904-removebg-preview.png' },
-  { id: 'br13', name: 'Cliente Brasil 13', image: 'https://i.postimg.cc/JhL2XT4t/IMG-8905-removebg-preview.png' },
+  { id: 'br13', name: 'Cliente Brasil 13', image: 'https://i.postimg.cc/JhL2XT4t/IMG-8905-preview.png' },
   { id: 'br14', name: 'Cliente Brasil 14', image: 'https://i.postimg.cc/43gSc8Nh/IMG-8906-removebg-preview.png' },
   { id: 'br15', name: 'Cliente Brasil 15', image: 'https://i.postimg.cc/1zQjFW5f/IMG-8907-removebg-preview.png' },
   { id: 'br16', name: 'Cliente Brasil 16', image: 'https://i.postimg.cc/DzPYPq8M/IMG-8909-removebg-preview.png' },
@@ -66,10 +66,18 @@ const CLIENTS_BR = [
 ];
 
 const INSTAGRAM_POSTS = [
-  { id: 1, image: 'https://images.unsplash.com/photo-1492691523567-69b9a61e0d45?auto=format&fit=crop&q=80&w=800' },
-  { id: 2, image: 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&q=80&w=800' },
-  { id: 3, image: 'https://images.unsplash.com/photo-1551316679-9c6ae9dec224?auto=format&fit=crop&q=80&w=800', active: true },
-  { id: 4, image: 'https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&q=80&w=800' },
+  { 
+    id: 1, 
+    image: 'https://i.postimg.cc/1XjGKzGj/IMG-8920.jpg', 
+    active: true,
+    link: 'https://www.instagram.com/s/aGlnaGxpZ2h0OjE4MDY4MDAxNzczMDgyMTc0?story_media_id=3651918309785921823&igsh=MXJ6bWo4d2R0bXBqdg=='
+  },
+  { 
+    id: 2, 
+    image: 'https://i.postimg.cc/cCbRcJ7y/IMG-8922.jpg', 
+    active: true,
+    link: 'https://www.instagram.com/s/aGlnaGxpZ2h0OjE3ODUwMjk1ODUxNDU0NzQw?story_media_id=3667194396547749721&igsh=NXMwNG8yM2U1OWlw'
+  },
 ];
 
 const SERVICES = [
@@ -106,7 +114,7 @@ const SERVICES = [
     title: "Consultoria",
     tagline: "Insight & Strategy",
     description: "Consultoria personalizada ao vivo com Munik Rangel.",
-    fullDescription: "Consultoria personalizada ao vivo com Munik Rangel. Dirigida a profissionais de qualquer área que pretendam criar conteúdos em vídeo, mas não sabem por onde começar.\n\nEla vai orientar-te sobre a utilização de equipamentos práticos como luz portátil, microfone, cenário e as mais recentes funcionalidades do Instagram, técnicas de captação, edição e estratégias de publicação.\n\nTudo online, ao seu ritmo.",
+    fullDescription: "Consultoria personalizada ao vivo com Munik Rangel. Dirigida a profissionais que pretendam criar conteúdos em vídeo, mas não sabem por onde começar.\n\nEla vai orientar-te sobre a utilização de equipamentos práticos como luz portátil, microfone, cenário e as mais recentes funcionalidades do Instagram, técnicas de captação, edição e estratégias de publicação.\n\nTudo online, ao seu ritmo.",
     cta: "explica melhor"
   }
 ];
@@ -528,14 +536,17 @@ const App: React.FC = () => {
             Portefólio
           </h3>
           
-          <div className="flex flex-wrap md:flex-nowrap items-center justify-center gap-4 md:gap-6 mb-16">
+          <div className="flex flex-wrap md:flex-nowrap items-center justify-center gap-6 md:gap-10 mb-16">
             {INSTAGRAM_POSTS.map((post) => (
-              <motion.div
+              <motion.a
                 key={post.id}
+                href={post.link}
+                target="_blank"
+                rel="noopener noreferrer"
                 whileHover={{ scale: 1.03 }}
-                className={`relative overflow-hidden rounded-2xl shadow-xl w-full sm:w-[45%] md:w-1/4 aspect-square ${post.active ? 'bg-gray-400' : 'bg-gray-100'}`}
+                className={`relative overflow-hidden rounded-2xl shadow-xl w-full sm:w-[48%] md:w-1/3 aspect-square block ${post.active ? 'bg-gray-400' : 'bg-gray-100'}`}
               >
-                <img src={post.image} alt="Portfolio Instagram" className={`w-full h-full object-cover ${post.active ? 'opacity-70' : 'opacity-100'}`} />
+                <img src={post.image} alt="Portfolio Content" className={`w-full h-full object-cover ${post.active ? 'opacity-70' : 'opacity-100'}`} />
                 {post.active && (
                   <div className="absolute inset-0 flex items-center justify-center">
                     <Instagram className="w-12 h-12 text-white" />
@@ -544,17 +555,17 @@ const App: React.FC = () => {
                 {post.active && (
                    <div className="absolute top-4 right-4 w-3 h-3 bg-[#E2BA3D] rounded-full shadow-lg" />
                 )}
-              </motion.div>
+              </motion.a>
             ))}
           </div>
 
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => openWhatsApp()}
+            onClick={() => window.open('https://www.instagram.com/s/aGlnaGxpZ2h0OjE4MDY4MDAxNzczMDgyMTc0?igsh=aWVrc3JxZmd3Mjhp', '_blank')}
             className="px-8 py-3 rounded-full border border-[#213D7A] text-[10px] font-bold text-[#213D7A] uppercase tracking-widest hover:bg-[#213D7A] hover:text-white transition-all duration-300"
           >
-            Ver portfólio completo
+            VER PORTEFÓLIO COMPLETO.
           </motion.button>
         </div>
       </section>
