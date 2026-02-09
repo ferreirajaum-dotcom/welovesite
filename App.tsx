@@ -395,7 +395,7 @@ const App: React.FC = () => {
               </div>
             </div>
             <div className="space-y-10">
-              <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-[#961D1D]">The Visionary</h2>
+              <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-[#961D1D]">Quem Somos</h2>
               <h3 className="text-3xl md:text-6xl font-heading font-black text-balance">MUNIK RANGEL.</h3>
               <p className="text-base md:text-lg text-[#213D7A]/60 leading-relaxed font-light">
                 Ex-Globo, IBM e BASF. Head de CX e estrategista digital certificada pela New York Film Academy. Munik combina a sofisticação da televisão with a agilidade do digital.
