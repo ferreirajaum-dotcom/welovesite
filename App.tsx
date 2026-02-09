@@ -471,6 +471,21 @@ const App: React.FC = () => {
                     <span className="text-[#213D7A]/80 text-base md:text-lg font-medium leading-relaxed">Na Europa, além do nicho de imobiliária, estética e terapia, colaborou com duas revistas e realizou a cobertura de eventos em Lisboa, Paris, na Semana de Design de Milão - Itália e na Euroshop em Düsseldorf - Alemanha.</span>
                   </li>
                 </ul>
+
+                {/* --- Expertise Section --- */}
+                <div className="mt-16 pt-10 border-t border-gray-100">
+                  <h5 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#961D1D] mb-8">EXPERTISE</h5>
+                  <div className="flex flex-wrap gap-4 md:gap-8">
+                    {['Criatividade', 'Valor', 'Autenticidade', 'Emoção', 'Conexão Real'].map((item) => (
+                      <div key={item} className="flex items-center gap-3 group">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#E2BA3D] group-hover:scale-150 transition-transform duration-300" />
+                        <span className="text-[#213D7A] font-heading font-bold text-[13px] md:text-[15px] uppercase tracking-tighter">
+                          {item}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
