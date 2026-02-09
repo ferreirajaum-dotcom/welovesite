@@ -103,6 +103,7 @@ const App: React.FC = () => {
   const { scrollY, scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
 
+  // Dynamic values for header based on scroll
   const navBackground = useTransform(scrollY, [0, 100], ["rgba(255, 255, 255, 0)", "rgba(255, 255, 255, 1)"]);
   const navShadow = useTransform(scrollY, [0, 100], ["none", "0 4px 6px -1px rgb(0 0 0 / 0.1)"]);
   const navTextColor = useTransform(scrollY, [0, 100], ["#FFFFFF", "#213D7A"]);
@@ -115,9 +116,10 @@ const App: React.FC = () => {
   const scrollToSection = (id: string) => {
     setMobileMenuOpen(false);
     const sectionMap: Record<string, string> = {
-      'inicio': 'inicio',
-      'servicos': 'servicos-elite',
-      'a-wee': 'quem-somos',
+      'início': 'inicio',
+      'serviços': 'servicos-elite',
+      'quem-somos': 'quem-somos',
+      'portefólio': 'portfolio',
       'clientes': 'clientes',
       'contacto': 'contacto'
     };
@@ -125,7 +127,7 @@ const App: React.FC = () => {
     const targetId = sectionMap[id] || id;
     const el = document.getElementById(targetId);
     if (el) {
-      const offset = id === 'inicio' ? 0 : 100;
+      const offset = id === 'início' ? 0 : 100;
       window.scrollTo({ top: el.offsetTop - offset, behavior: 'smooth' });
     }
   };
@@ -143,6 +145,7 @@ const App: React.FC = () => {
 
       <motion.div className="fixed top-0 left-0 right-0 h-1 bg-[#E2BA3D] origin-left z-[110]" style={{ scaleX }} />
 
+      {/* ANNOUNCEMENT TICKER */}
       <div className="fixed top-0 left-0 right-0 z-[105] bg-[#961D1D] text-white h-8 md:h-10 overflow-hidden border-b border-[#E2BA3D]/20">
         <motion.div 
           className="whitespace-nowrap flex items-center h-full gap-8 md:gap-16"
@@ -167,6 +170,7 @@ const App: React.FC = () => {
         </motion.div>
       </div>
 
+      {/* NAVIGATION */}
       <motion.nav 
         style={{ 
           backgroundColor: navBackground,
@@ -175,7 +179,7 @@ const App: React.FC = () => {
         }}
         className="fixed top-8 md:top-10 left-0 right-0 z-100 flex items-center justify-between px-6 md:px-12 py-5 border-b transition-all duration-300"
       >
-        <div className="cursor-pointer" onClick={() => scrollToSection('inicio')}>
+        <div className="cursor-pointer" onClick={() => scrollToSection('início')}>
            <motion.img 
             style={{ filter: useTransform(scrollY, [0, 100], ["brightness(0) invert(1)", "none"]) }}
             src="https://i.postimg.cc/wvL4w0q5/logo-wee.png" 
@@ -185,7 +189,7 @@ const App: React.FC = () => {
         </div>
         
         <div className="hidden lg:flex gap-10 text-[10px] font-black tracking-[0.25em] uppercase">
-          {['Início', 'Serviços', 'A Wee', 'Clientes', 'Contacto'].map((item) => (
+          {['Início', 'Serviços', 'Quem Somos', 'Portefólio', 'Clientes', 'Contacto'].map((item) => (
             <motion.button 
               key={item}
               style={{ color: navTextColor }}
@@ -207,7 +211,7 @@ const App: React.FC = () => {
         </motion.button>
       </motion.nav>
 
-      {/* HERO SECTION - 100SVH FIXED ON MOBILE */}
+      {/* HERO SECTION - REFINED CENTRALIZATION */}
       <header id="inicio" className="relative h-[100svh] min-h-[100svh] md:min-h-[100vh] w-full flex items-center justify-center overflow-hidden bg-black">
         {/* VIDEO BACKGROUND - FULL COVERAGE */}
         <div className="absolute inset-0 z-0 w-full h-full pointer-events-none">
@@ -237,6 +241,7 @@ const App: React.FC = () => {
             transition={{ duration: 1.2, ease: EASE_PREMIUM }}
             className="flex flex-col items-center text-center w-full"
           >
+            {/* HEADLINE: TRAVED SIZES */}
             <h1 className="font-heading font-bold text-white capitalize text-balance
               text-[38px] leading-[1.12] max-w-[92vw] 
               md:text-[52px] md:leading-[1.08] md:max-w-[760px]
@@ -245,6 +250,7 @@ const App: React.FC = () => {
               <span className="text-[#E2BA3D]">em resultados reais.</span>
             </h1>
 
+            {/* SUBTITLE: TRAVED SIZES */}
             <p className="font-light text-white/80 opacity-90 mx-auto mt-6 md:mt-8
               text-[14px] leading-[1.55] max-w-[86vw]
               md:text-[16px] md:leading-[1.5] md:max-w-[640px]
@@ -252,6 +258,7 @@ const App: React.FC = () => {
               Estratégia, Formação, Conteúdo e Criatividade para marcas que querem crescer no digital.
             </p>
 
+            {/* CTA BUTTON */}
             <div className="mt-[24px] md:mt-[32px]">
               <motion.button 
                 whileHover={{ scale: 1.05 }}
@@ -274,6 +281,7 @@ const App: React.FC = () => {
         </motion.div>
       </header>
 
+      {/* MOBILE MENU OVERLAY */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -284,9 +292,10 @@ const App: React.FC = () => {
           >
             <button onClick={() => setMobileMenuOpen(false)} className="absolute top-12 right-8 p-4 text-[#213D7A]"><X className="w-8 h-8" /></button>
             <div className="flex flex-col gap-8 text-2xl font-black uppercase tracking-widest text-[#213D7A]">
-              <button onClick={() => scrollToSection('inicio')}>Início</button>
-              <button onClick={() => scrollToSection('servicos')}>Serviços</button>
-              <button onClick={() => scrollToSection('a-wee')}>A Wee</button>
+              <button onClick={() => scrollToSection('início')}>Início</button>
+              <button onClick={() => scrollToSection('serviços')}>Serviços</button>
+              <button onClick={() => scrollToSection('quem-somos')}>Quem Somos</button>
+              <button onClick={() => scrollToSection('portefólio')}>Portefólio</button>
               <button onClick={() => scrollToSection('clientes')}>Clientes</button>
               <button onClick={() => scrollToSection('contacto')}>Contacto</button>
             </div>
@@ -428,7 +437,7 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      <section className="py-24 md:py-32 bg-white">
+      <section id="portfolio" className="py-24 md:py-32 bg-white">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <h3 className="text-[1.8rem] md:text-4xl font-heading font-black text-[#213D7A] mb-16 tracking-widest uppercase">
             O nosso trabalho no Instagram
