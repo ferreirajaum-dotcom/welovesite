@@ -499,7 +499,7 @@ export const App: React.FC = () => {
                     <img 
                       src={c.image} 
                       alt={c.name} 
-                      className="max-h-[80%] max-w-[90%] object-contain filter brightness-0 invert opacity-60 group-hover:filter-none group-hover:opacity-100 transition-all duration-500" 
+                      className="max-h-[50px] max-w-[140px] md:max-h-[70px] md:max-w-[200px] w-auto h-auto object-contain filter brightness-0 invert opacity-60 group-hover:filter-none group-hover:opacity-100 transition-all duration-500" 
                     />
                   </motion.div>
                 ))}
@@ -518,7 +518,7 @@ export const App: React.FC = () => {
                     <img 
                       src={c.image} 
                       alt={c.name} 
-                      className="max-h-[80%] max-w-[90%] object-contain filter brightness-0 invert opacity-60 group-hover:filter-none group-hover:opacity-100 transition-all duration-500" 
+                      className="max-h-[50px] max-w-[140px] md:max-h-[70px] md:max-w-[200px] w-auto h-auto object-contain filter brightness-0 invert opacity-60 group-hover:filter-none group-hover:opacity-100 transition-all duration-500" 
                     />
                   </motion.div>
                 ))}
