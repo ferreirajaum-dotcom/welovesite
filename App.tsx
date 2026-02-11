@@ -494,12 +494,12 @@ export const App: React.FC = () => {
                   <motion.div 
                     key={c.id} 
                     whileHover={{ scale: 1.05 }} 
-                    className="flex items-center justify-center group w-full h-14 md:h-20"
+                    className="flex items-center justify-center group w-full h-14 md:h-20 leading-[0]"
                   >
                     <img 
                       src={c.image} 
                       alt={c.name} 
-                      className="max-h-[50px] max-w-[140px] md:max-h-[70px] md:max-w-[200px] w-auto h-auto object-contain filter brightness-0 invert opacity-60 group-hover:filter-none group-hover:opacity-100 transition-all duration-500" 
+                      className="block max-h-[52px] max-w-[150px] md:max-h-[72px] md:max-w-[220px] w-auto h-auto object-contain filter brightness-0 invert opacity-60 group-hover:filter-none group-hover:opacity-100 transition-all duration-500" 
                     />
                   </motion.div>
                 ))}
@@ -513,12 +513,12 @@ export const App: React.FC = () => {
                   <motion.div 
                     key={c.id} 
                     whileHover={{ scale: 1.05 }} 
-                    className="flex items-center justify-center group w-full h-14 md:h-20"
+                    className="flex items-center justify-center group w-full h-14 md:h-20 leading-[0]"
                   >
                     <img 
                       src={c.image} 
                       alt={c.name} 
-                      className="max-h-[50px] max-w-[140px] md:max-h-[70px] md:max-w-[200px] w-auto h-auto object-contain filter brightness-0 invert opacity-60 group-hover:filter-none group-hover:opacity-100 transition-all duration-500" 
+                      className="block max-h-[52px] max-w-[150px] md:max-h-[72px] md:max-w-[220px] w-auto h-auto object-contain filter brightness-0 invert opacity-60 group-hover:filter-none group-hover:opacity-100 transition-all duration-500" 
                     />
                   </motion.div>
                 ))}
