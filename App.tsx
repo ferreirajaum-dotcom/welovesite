@@ -40,17 +40,17 @@ const CLIENTS_PT = [
 ];
 
 const CLIENTS_BR = [
-  { id: 'br1', name: 'Cliente Brasil 1', image: 'https://i.postimg.cc/9Mb1ZJRL/IMG-8918.jpg' },
-  { id: 'br2', name: 'Cliente Brasil 2', image: 'https://i.postimg.cc/gk15zc9W/IMG-8892-removebg-preview.png' },
-  { id: 'br3', name: 'Cliente Brasil 3', image: 'https://i.postimg.cc/2SvtVpmk/IMG-8893-removebg-preview.png' },
-  { id: 'br4', name: 'Cliente Brasil 4', image: 'https://i.postimg.cc/4xt0mCZX/IMG-8894-removebg-preview.png' },
-  { id: 'br5', name: 'Cliente Brasil 5', image: 'https://i.postimg.cc/P5Z7PGhx/IMG-8895-removebg-preview.png' },
-  { id: 'br6', name: 'Cliente Brasil 6', image: 'https://i.postimg.cc/NjTn5hY5/IMG-8896-removebg-preview.png' },
-  { id: 'br7', name: 'Cliente Brasil 7', image: 'https://i.postimg.cc/cLYzrqZg/IMG-8898-removebg-preview.png' },
-  { id: 'br8', name: 'Cliente Brasil 8', image: 'https://i.postimg.cc/VkMhdy10/IMG-8899-removebg-preview.png' },
-  { id: 'br9', name: 'Cliente Brasil 9', image: 'https://i.postimg.cc/52vr6c1C/IMG-8900-removebg-preview.png' },
-  { id: 'br10', name: 'Cliente Brasil 10', image: 'https://i.postimg.cc/htxYfFgm/IMG-8901-removebg-preview.png' },
-  { id: 'br11', name: 'Cliente Brasil 11', image: 'https://i.postimg.cc/3wTcGLJJ/IMG-8903-removebg-preview.png' },
+  { id: 'br1', name: 'Cidad 3', image: 'https://i.postimg.cc/9Mb1ZJRL/IMG-8918.jpg' },
+  { id: 'br2', name: 'Clichê 40', image: 'https://i.postimg.cc/gk15zc9W/IMG-8892-removebg-preview.png' },
+  { id: 'br3', name: 'Cilene Lupi', image: 'https://i.postimg.cc/2SvtVpmk/IMG-8893-removebg-preview.png' },
+  { id: 'br4', name: 'WVS Arquitetura', image: 'https://i.postimg.cc/4xt0mCZX/IMG-8894-removebg-preview.png' },
+  { id: 'br5', name: 'Rollox', image: 'https://i.postimg.cc/P5Z7PGhx/IMG-8895-removebg-preview.png' },
+  { id: 'br6', name: 'mne Nucleo Nordeste', image: 'https://i.postimg.cc/NjTn5hY5/IMG-8896-removebg-preview.png' },
+  { id: 'br7', name: 'Senac', image: 'https://i.postimg.cc/cLYzrqZg/IMG-8898-removebg-preview.png' },
+  { id: 'br8', name: 'Priscila Mattos Venturi', image: 'https://i.postimg.cc/VkMhdy10/IMG-8899-removebg-preview.png' },
+  { id: 'br9', name: 'Clínica Isto', image: 'https://i.postimg.cc/52vr6c1C/IMG-8900-removebg-preview.png' },
+  { id: 'br10', name: 'Adriana Farias', image: 'https://i.postimg.cc/htxYfFgm/IMG-8901-removebg-preview.png' },
+  { id: 'br11', name: 'Gestran', image: 'https://i.postimg.cc/3wTcGLJJ/IMG-8903-removebg-preview.png' },
   { id: 'br12', name: 'Cliente Brasil 12', image: 'https://i.postimg.cc/1zQjFW53/IMG-8904-removebg-preview.png' },
   { id: 'br13', name: 'Cliente Brasil 13', image: 'https://i.postimg.cc/JhL2XT4t/IMG-8905-preview.png' },
   { id: 'br14', name: 'Cliente Brasil 14', image: 'https://i.postimg.cc/43gSc8Nh/IMG-8906-removebg-preview.png' },
@@ -68,13 +68,13 @@ const CLIENTS_BR = [
 const INSTAGRAM_POSTS = [
   { 
     id: 1, 
-    image: 'https://i.postimg.cc/1XjGKzGj/IMG-8920.jpg', 
+    image: 'https://i.postimg.cc/G2GqXYWB/Whats-App-Image-2026-02-11-at-13-04-55.jpg', 
     active: true,
     link: 'https://www.instagram.com/s/aGlnaGxpZ2h0OjE4MDY4MDAxNzczMDgyMTc0?story_media_id=3651918309785921823&igsh=MXJ6bWo4d2R0bXBqdg=='
   },
   { 
     id: 2, 
-    image: 'https://i.postimg.cc/cCbRcJ7y/IMG-8922.jpg', 
+    image: 'https://i.postimg.cc/26h20vsy/Whats-App-Image-2026-02-11-at-13-04-55-(1).jpg', 
     active: true,
     link: 'https://www.instagram.com/s/aGlnaGxpZ2h0OjE3ODUwMjk1ODUxNDU0NzQw?story_media_id=3667194396547749721&igsh=NXMwNG8yM2U1OWlw'
   },
@@ -137,7 +137,7 @@ const UNIQUE_VALUES = [
   }
 ];
 
-const App: React.FC = () => {
+export const App: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<typeof SERVICES[0] | null>(null);
   const { scrollY, scrollYProgress } = useScroll();
@@ -268,17 +268,24 @@ const App: React.FC = () => {
       <header id="inicio" className="relative h-[100svh] min-h-[100svh] md:min-h-[100vh] w-full flex items-center justify-center overflow-hidden bg-black">
         <div className="absolute inset-0 z-0 w-full h-full pointer-events-none">
           <div className="absolute inset-0 bg-cover bg-center opacity-40 bg-[url('https://i.postimg.cc/wvL4w0q5/logo-wee.png')]" />
-          <div className="absolute inset-0 w-full h-full overflow-hidden">
+          
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1.5, ease: "easeOut" }}
+            className="absolute inset-0 w-full h-full overflow-hidden"
+          >
             <iframe 
-              src="https://player.vimeo.com/video/1153987727?background=1&autoplay=1&loop=1&muted=1&playsinline=1&title=0&byline=0&portrait=0&badge=0" 
+              src="https://player.vimeo.com/video/1153987727?background=1&autoplay=1&loop=1&muted=1&playsinline=1&title=0&byline=0&portrait=0&badge=0&quality=1080p&autopause=0&dnt=1" 
               className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[177.77777778vh] h-[56.25vw] min-w-full min-h-full"
               frameBorder="0" 
-              allow="autoplay; fullscreen" 
+              allow="autoplay; fullscreen; picture-in-picture" 
               title="WEE Background Video"
               aria-hidden="true"
-              style={{ objectFit: 'cover' }}
+              style={{ objectFit: 'cover', pointerEvents: 'none' }}
+              loading="eager"
             />
-          </div>
+          </motion.div>
         </div>
 
         <div className="absolute inset-0 z-[1] bg-black/50 backdrop-blur-[0.5px]" />
@@ -291,21 +298,21 @@ const App: React.FC = () => {
             className="flex flex-col items-center text-center w-full"
           >
             <h1 className="font-heading font-bold text-white capitalize text-balance
-              text-[38px] leading-[1.12] max-w-[92vw] 
+              text-[26px] leading-[1.2] max-w-[88vw] 
               md:text-[52px] md:leading-[1.08] md:max-w-[760px]
               lg:text-[64px] lg:leading-[1.05] lg:max-w-[900px]">
               Transformamos presença digital <br className="hidden md:block" /> 
               <span className="text-[#E2BA3D]">em resultados reais.</span>
             </h1>
 
-            <p className="font-light text-white/80 opacity-90 mx-auto mt-6 md:mt-8
-              text-[14px] leading-[1.55] max-w-[86vw]
+            <p className="font-light text-white/80 opacity-90 mx-auto mt-5 md:mt-8
+              text-[13px] leading-[1.5] max-w-[82vw]
               md:text-[16px] md:leading-[1.5] md:max-w-[640px]
               lg:text-[18px] lg:max-w-[720px]">
               Estratégia, Formação, Conteúdo e Criatividade para marcas que querem crescer no digital.
             </p>
 
-            <div className="mt-[24px] md:mt-[32px]">
+            <div className="mt-[28px] md:mt-[32px]">
               <motion.button 
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -327,36 +334,11 @@ const App: React.FC = () => {
         </motion.div>
       </header>
 
-      {/* MOBILE MENU OVERLAY */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, x: '100%' }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: '100%' }}
-            className="fixed inset-0 z-[200] bg-white flex flex-col items-center justify-center p-8 text-center"
-          >
-            <button onClick={() => setMobileMenuOpen(false)} className="absolute top-12 right-8 p-4 text-[#213D7A]"><X className="w-8 h-8" /></button>
-            <div className="flex flex-col gap-8 text-2xl font-black uppercase tracking-widest text-[#213D7A]">
-              <button onClick={() => scrollToSection('Início')}>Início</button>
-              <button onClick={() => scrollToSection('Serviços')}>Serviços</button>
-              <button onClick={() => scrollToSection('Quem Somos')}>Quem Somos</button>
-              <button onClick={() => scrollToSection('Portefólio')}>Portefólio</button>
-              <button onClick={() => scrollToSection('Clientes')}>Clientes</button>
-              <button onClick={() => scrollToSection('Contacto')}>Contacto</button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       <section id="servicos-elite" className="py-24 md:py-40 bg-white">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-end mb-24 gap-8">
             <div className="max-w-xl">
               <h3 className="text-3xl md:text-6xl font-heading font-black text-[#213D7A] leading-tight text-balance">O QUE FAZEMOS.</h3>
-            </div>
-            <div className="w-full md:w-auto">
-              <p className="text-[#213D7A]/40 font-bold uppercase text-[9px] tracking-[0.3em]">Scroll para explorar ✦</p>
             </div>
           </div>
 
@@ -445,7 +427,7 @@ const App: React.FC = () => {
                    Nós somos uma agência de marketing que atende clientes no Brasil e em Portugal.
                 </p>
 
-                <h3 className="text-4xl md:text-7xl font-heading font-black text-[#213D7A] tracking-tighter leading-none mb-10">
+                <h3 className="text-3xl md:text-7xl font-heading font-black text-[#213D7A] tracking-tighter leading-none mb-10">
                   MUNIK RANGEL.
                 </h3>
                 
@@ -507,10 +489,18 @@ const App: React.FC = () => {
           <div className="space-y-32">
             <div>
               <h3 className="text-white/40 text-[10px] font-black uppercase tracking-[0.4em] mb-12 border-l-2 border-[#E2BA3D] pl-4">Portugal</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-y-12 gap-x-8 md:gap-y-20 md:gap-x-16 items-center justify-items-center">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-12 md:gap-16 items-center">
                 {CLIENTS_PT.map(c => (
-                  <motion.div key={c.id} whileHover={{ scale: 1.1 }} className="flex flex-col items-center group w-full max-w-[160px] md:max-w-[200px]">
-                    <img src={c.image} alt={c.name} className="h-10 md:h-20 w-auto object-contain filter brightness-0 invert opacity-60 group-hover:filter-none group-hover:opacity-100 transition-all duration-500" />
+                  <motion.div 
+                    key={c.id} 
+                    whileHover={{ scale: 1.05 }} 
+                    className="flex items-center justify-center group w-full h-14 md:h-20"
+                  >
+                    <img 
+                      src={c.image} 
+                      alt={c.name} 
+                      className="max-h-[80%] max-w-[90%] object-contain filter brightness-0 invert opacity-60 group-hover:filter-none group-hover:opacity-100 transition-all duration-500" 
+                    />
                   </motion.div>
                 ))}
               </div>
@@ -518,10 +508,18 @@ const App: React.FC = () => {
 
             <div>
               <h3 className="text-white/40 text-[10px] font-black uppercase tracking-[0.4em] mb-12 border-l-2 border-[#E2BA3D] pl-4">Brasil</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-y-12 gap-x-8 md:gap-y-20 md:gap-x-12 items-center justify-items-center">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-12 md:gap-16 items-center">
                 {CLIENTS_BR.map(c => (
-                  <motion.div key={c.id} whileHover={{ scale: 1.1 }} className="flex flex-col items-center group w-full max-w-[120px] md:max-w-[180px]">
-                    <img src={c.image} alt={c.name} className="h-10 md:h-16 w-auto object-contain filter brightness-0 invert opacity-60 group-hover:filter-none group-hover:opacity-100 transition-all duration-500" />
+                  <motion.div 
+                    key={c.id} 
+                    whileHover={{ scale: 1.05 }} 
+                    className="flex items-center justify-center group w-full h-14 md:h-20"
+                  >
+                    <img 
+                      src={c.image} 
+                      alt={c.name} 
+                      className="max-h-[80%] max-w-[90%] object-contain filter brightness-0 invert opacity-60 group-hover:filter-none group-hover:opacity-100 transition-all duration-500" 
+                    />
                   </motion.div>
                 ))}
               </div>
